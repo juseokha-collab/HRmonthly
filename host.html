@@ -478,7 +478,7 @@ function render(){
   if(slide.act===3){ var band = el("div","cover-band"); contentWrap = band; }
 
   contentWrap.appendChild(el("div","slide-eyebrow", slide.act===3?"2027 INVESTMENT PORTFOLIO":("SLIDE "+String(local.slideIndex+1).padStart(2,"0"))));
-  contentWrap.appendChild(el("h2","slide-title",esc(slide.title)));
+  contentWrap.appendChild(el("h2","slide-title",esc(slide.title).replace(/\n/g,"<br>")));
   if(slide.body && slide.body.length){
     var bd = el("div","slide-body");
     slide.body.forEach(function(l){ bd.appendChild(el("div","ln",esc(l))); });
