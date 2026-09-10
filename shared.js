@@ -8,6 +8,11 @@
 var ACT_LABEL = {1:"PERSONAL INVESTOR",2:"INVESTMENT MEMO",3:"INVESTMENT COMMITTEE",4:"TO MYSELF"};
 
 var SLIDES = [
+{id:"s00",act:1,kind:"content",cover:true,title:"오랜만입니다!\n다시, 함께 모이는 시간",
+ body:["여러 일정에 밀려 잠시 쉬어갔던 Monthly, 오랜만에 다시 엽니다.","오늘은 정답을 찾는 자리가 아니라 — 모처럼 팀 전체가 모여 자유롭게 생각을 나누는 시간입니다."],
+ visual:{type:"pills",items:["반갑습니다","오랜만입니다","자유롭게","솔직하게","함께"]},
+ caption:"형식보다 대화, 발표보다 교감."},
+
 {id:"s01",act:1,kind:"content",title:"나는 어디에 투자하고 있는가?",
  body:["우리는 매일 무언가에 투자합니다.","돈, 시간, 에너지, 관계, 커리어 그리고 나 자신.","그런데 재미있는 것은 — 내가 중요하다고 생각하는 것과","다른 사람이 중요하다고 생각하는 것이 항상 같지는 않다는 것입니다."],
  visual:{type:"pills",items:["MONEY","TIME","ENERGY","CAREER","RELATIONSHIP","ME"]},
