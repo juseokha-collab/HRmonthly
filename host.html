@@ -7,26 +7,26 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root{
-    --paper:#F3F6F2; --paper-raised:#FFFFFF; --ink:#14181C; --ink-soft:#55606A; --ink-faint:#8B95A0;
-    --rule:#D9DEDA; --up:#C4351F; --up-soft:#F7E1DD; --down:#28489C; --down-soft:#DEE6F7;
-    --highlight:#8A5F0B; --highlight-soft:#F3E6C8; --navy:#0F2540; --shadow:rgba(20,24,28,.10);
-    --ok:#1E7A3D; --ok-soft:#DCF0E2;
+    --paper:#F5F4FC; --paper-raised:#FFFFFF; --ink:#1B1830; --ink-soft:#5D5A78; --ink-faint:#9895B2;
+    --rule:#E5E2F5; --up:#6E56CF; --up-soft:#ECE7FB; --down:#28489C; --down-soft:#DEE6F7;
+    --highlight:#B0842A; --highlight-soft:#F6ECD3; --navy:#241B4E; --shadow:rgba(110,86,207,.14);
+    --ok:#1E7A3D; --ok-soft:#DCF0E2; --accent:#6E56CF; --accent-deep:#4C3AA0;
     --font-d:'Gowun Batang',serif; --font-b:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
     --font-m:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
   }
   @media (prefers-color-scheme:dark){
     :root:not([data-theme="light"]){
-      --paper:#14171A; --paper-raised:#1C2024; --ink:#ECEFEC; --ink-soft:#ABB4BB; --ink-faint:#707A82;
-      --rule:#2A3034; --up:#E8664F; --up-soft:#3A211D; --down:#7FA3FF; --down-soft:#1B2740;
-      --highlight:#E3AC4C; --highlight-soft:#3A2E12; --navy:#CFE0F5; --shadow:rgba(0,0,0,.45);
-      --ok:#4FC27B; --ok-soft:#173325;
+      --paper:#14121F; --paper-raised:#1E1B30; --ink:#EDEBFA; --ink-soft:#B3AFCC; --ink-faint:#7E7A99;
+      --rule:#2E2A47; --up:#9C8CF0; --up-soft:#2A2447; --down:#7FA3FF; --down-soft:#1B2740;
+      --highlight:#E3AC4C; --highlight-soft:#3A2E12; --navy:#CFC5F5; --shadow:rgba(0,0,0,.5);
+      --ok:#4FC27B; --ok-soft:#173325; --accent:#9C8CF0; --accent-deep:#C3B6FF;
     }
   }
   :root[data-theme="dark"]{
-    --paper:#14171A; --paper-raised:#1C2024; --ink:#ECEFEC; --ink-soft:#ABB4BB; --ink-faint:#707A82;
-    --rule:#2A3034; --up:#E8664F; --up-soft:#3A211D; --down:#7FA3FF; --down-soft:#1B2740;
-    --highlight:#E3AC4C; --highlight-soft:#3A2E12; --navy:#CFE0F5; --shadow:rgba(0,0,0,.45);
-    --ok:#4FC27B; --ok-soft:#173325;
+    --paper:#14121F; --paper-raised:#1E1B30; --ink:#EDEBFA; --ink-soft:#B3AFCC; --ink-faint:#7E7A99;
+    --rule:#2E2A47; --up:#9C8CF0; --up-soft:#2A2447; --down:#7FA3FF; --down-soft:#1B2740;
+    --highlight:#E3AC4C; --highlight-soft:#3A2E12; --navy:#CFC5F5; --shadow:rgba(0,0,0,.5);
+    --ok:#4FC27B; --ok-soft:#173325; --accent:#9C8CF0; --accent-deep:#C3B6FF;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -65,7 +65,7 @@
   .stage-main{padding:52px 48px 32px;overflow:auto;display:flex;flex-direction:column;gap:20px;justify-content:flex-start;}
   .stage-side{padding:52px 40px 32px;border-left:1px solid var(--rule);overflow:auto;display:flex;flex-direction:column;gap:16px;justify-content:flex-start;background:var(--paper-raised);}
   .slide-eyebrow{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;}
-  .slide-title{font-family:var(--font-d);font-size:clamp(24px,3.1vw,40px);line-height:1.3;}
+  .slide-title{font-family:var(--font-b);font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;}
   .slide-body{font-size:16px;line-height:1.85;color:var(--ink-soft);max-width:62ch;}
   .slide-body .ln{margin-bottom:2px;}
   .slide-caption{font-family:var(--font-m);font-size:13px;color:var(--ink-faint);border-left:2px solid var(--highlight);padding-left:10px;margin-top:4px;}
@@ -83,7 +83,7 @@
   .qr-overlay{position:fixed;inset:0;background:rgba(10,12,14,.62);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
   .qr-box{background:var(--paper-raised);border-radius:18px;padding:32px 36px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-width:360px;width:100%;}
   .qr-box #qrcode{padding:14px;background:#fff;border-radius:10px;}
-  .qr-title{font-family:var(--font-d);font-size:20px;text-align:center;}
+  .qr-title{font-family:var(--font-b);font-weight:700;font-size:20px;text-align:center;}
   .qr-sub{font-size:12.5px;color:var(--ink-faint);text-align:center;line-height:1.6;word-break:break-all;}
   .qr-close{margin-top:6px;}
 
@@ -169,6 +169,18 @@
   [data-act="4"] .stage-main{align-items:center;text-align:center;padding:60px 40px;}
   [data-act="4"] .slide-title{font-size:clamp(28px,4.4vw,48px);max-width:16ch;}
   [data-act="4"] .slide-body{max-width:46ch;}
+
+  .stat-tile,.value-card,.wall-item,.three-col .tc,.flow-node,.qr-box,.sp-item{box-shadow:0 3px 16px var(--shadow);border-radius:16px;}
+  .join-btn,.nav-btn,.icon-btn{box-shadow:0 2px 8px var(--shadow);}
+  .nav-btn.primary{background:var(--accent);border-color:var(--accent);box-shadow:0 3px 12px var(--shadow);}
+
+  .ring-pair{display:flex;align-items:center;gap:18px;}
+  .ring{width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--rp,0)*1%), var(--up-soft) 0);display:flex;align-items:center;justify-content:center;position:relative;flex:none;}
+  .ring::before{content:"";position:absolute;inset:8px;background:var(--paper-raised);border-radius:50%;}
+  .ring .ring-v{position:relative;z-index:1;font-family:var(--font-m);font-weight:700;font-size:14px;color:var(--ink);}
+  .ring-label{display:flex;flex-direction:column;gap:3px;}
+  .ring-label .rl-k{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);letter-spacing:.06em;text-transform:uppercase;}
+  .ring-label .rl-v{font-family:var(--font-m);font-size:22px;color:var(--ink);font-weight:700;}
 
   @media (max-width:920px){
     .stage-body{grid-template-columns:1fr;}
@@ -297,12 +309,16 @@ function resultsPanel(slide){
     }
   } else if(slide.kind==="scale"){
     var values = docs.map(function(d){ return numOf(d.value); });
-    var pair = el("div","stat-pair");
-    var it1 = el("div","sp-item"); it1.appendChild(el("div","sp-l","평균 점수"));
-    it1.appendChild(el("div","sp-v", avg(values)!=null? avg(values).toFixed(1) : "—"));
-    var it2 = el("div","sp-item"); it2.appendChild(el("div","sp-l","응답 인원"));
-    it2.appendChild(el("div","sp-v", String(docs.length)));
-    pair.appendChild(it1); pair.appendChild(it2);
+    var scoreAvg = avg(values);
+    var min = (slide.scale.min!=null)?slide.scale.min:0, max=(slide.scale.max!=null)?slide.scale.max:100;
+    var rp = scoreAvg!=null ? Math.max(0,Math.min(100,(scoreAvg-min)/(max-min)*100)) : 0;
+    var pair = el("div","ring-pair");
+    var ring = el("div","ring"); ring.style.setProperty("--rp", String(rp));
+    ring.appendChild(el("div","ring-v", scoreAvg!=null? scoreAvg.toFixed(1) : "—"));
+    var label = el("div","ring-label");
+    label.appendChild(el("div","rl-k","평균 점수 · 응답 "+docs.length+"명"));
+    label.appendChild(el("div","rl-v", (scoreAvg!=null? scoreAvg.toFixed(1) : "—")+" / "+max));
+    pair.appendChild(ring); pair.appendChild(label);
     body.appendChild(pair);
   } else if(slide.kind==="dualscale"){
     var selfs = docs.map(function(d){ return numOf(d.self); });
@@ -405,7 +421,7 @@ function qrOverlay(){
   box.appendChild(el("div","qr-title","참여 QR"));
   box.appendChild(el("div","qr-sub","로그인 없이 이 QR을 찍거나 아래 링크로 들어오면 바로 참여할 수 있습니다."));
   var qc = el("div",""); qc.id="qrcode-host"; box.appendChild(qc);
-  try{ if(window.QRCode) new QRCode(qc, {text: joinUrl(), width:180, height:180, colorDark:"#14181C", colorLight:"#ffffff"}); }catch(e){}
+  try{ if(window.QRCode) new QRCode(qc, {text: joinUrl(), width:180, height:180, colorDark:"#1B1830", colorLight:"#ffffff"}); }catch(e){}
   box.appendChild(el("div","qr-sub",esc(joinUrl())));
   var close = el("button","nav-btn qr-close","닫기");
   close.addEventListener("click", function(){ qrOpen=false; render(); });
