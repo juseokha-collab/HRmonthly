@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>나는 어디에 투자하고 있는가 — 참여</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F3F6F2; --paper-raised:#FFFFFF; --ink:#14181C; --ink-soft:#55606A; --ink-faint:#8B95A0;
+    --rule:#D9DEDA; --up:#C4351F; --up-soft:#F7E1DD; --down:#28489C; --down-soft:#DEE6F7;
+    --ok:#1E7A3D; --ok-soft:#DCF0E2;
+    --font-d:'Gowun Batang',serif; --font-b:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-m:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#14171A; --paper-raised:#1C2024; --ink:#ECEFEC; --ink-soft:#ABB4BB; --ink-faint:#707A82;
+      --rule:#2A3034; --up:#E8664F; --up-soft:#3A211D; --down:#7FA3FF; --down-soft:#1B2740;
+      --ok:#4FC27B; --ok-soft:#173325;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14171A; --paper-raised:#1C2024; --ink:#ECEFEC; --ink-soft:#ABB4BB; --ink-faint:#707A82;
+    --rule:#2A3034; --up:#E8664F; --up-soft:#3A211D; --down:#7FA3FF; --down-soft:#1B2740;
+    --ok:#4FC27B; --ok-soft:#173325;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-b);}
+  button,input,textarea{font-family:var(--font-b);}
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+
+  .top{padding:16px 18px 10px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;}
+  .eyebrow{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;}
+  .conn{font-family:var(--font-m);font-size:10.5px;color:var(--ink-faint);display:flex;align-items:center;gap:5px;}
+  .conn .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);}
+  .conn[data-state="ok"]{color:var(--ok);} .conn[data-state="ok"] .dot{background:var(--ok);}
+  .conn[data-state="err"]{color:var(--up);} .conn[data-state="err"] .dot{background:var(--up);}
+
+  .wrap{flex:1;padding:22px 18px 40px;max-width:520px;margin:0 auto;width:100%;}
+  .q-title{font-family:var(--font-d);font-size:clamp(21px,5.5vw,28px);line-height:1.35;margin-bottom:18px;}
+  .q-sub{font-size:13.5px;color:var(--ink-soft);margin-bottom:18px;line-height:1.6;}
+
+  .opt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+  .opt-btn{display:flex;align-items:center;gap:10px;border:1.5px solid var(--rule);background:var(--paper-raised);border-radius:12px;padding:14px 16px;font-size:15.5px;text-align:left;color:var(--ink);}
+  .opt-btn.sel{border-color:var(--up);background:var(--up-soft);color:var(--up);font-weight:600;}
+  .opt-check{margin-left:auto;font-family:var(--font-m);font-size:13px;}
+
+  .field{margin-bottom:16px;}
+  .field label{font-family:var(--font-m);font-size:11.5px;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:6px;}
+  .field input[type=text],.field input[type=number],.field textarea{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:12px 13px;font-size:16px;background:var(--paper-raised);color:var(--ink);}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--up);}
+  .field textarea{resize:vertical;min-height:70px;}
+  .range-row{display:flex;align-items:center;gap:12px;}
+  .range-row input[type=range]{flex:1;}
+  .range-val{font-family:var(--font-m);font-size:20px;min-width:2.4em;text-align:right;font-variant-numeric:tabular-nums;}
+  .alloc-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .alloc-row .al-l{flex:1;font-size:14px;}
+  .alloc-row input{width:70px;border:1.5px solid var(--rule);border-radius:8px;padding:8px;font-family:var(--font-m);font-size:15px;text-align:right;background:var(--paper-raised);color:var(--ink);}
+  .alloc-sum{font-family:var(--font-m);font-size:12.5px;color:var(--ink-faint);margin-top:4px;}
+  .alloc-sum.warn{color:var(--up);}
+
+  .submit-btn{width:100%;border:none;background:var(--ink);color:var(--paper);border-radius:12px;padding:15px;font-size:16px;font-weight:600;margin-top:4px;}
+  .submit-btn:disabled{opacity:.4;}
+  .done-note{font-family:var(--font-m);font-size:12.5px;color:var(--ok);margin-top:12px;display:flex;align-items:center;gap:6px;}
+
+  .wait-box{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:10px;}
+  .wait-box .w-title{font-family:var(--font-d);font-size:22px;}
+  .wait-box .w-sub{font-size:13.5px;color:var(--ink-faint);max-width:32ch;}
+  .err-box{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--up);font-size:13.5px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="shared.js"></script>
+<script src="firebase-sync.js"></script>
+<script>
+(function(){
+"use strict";
+
+var app = document.getElementById("app");
+var connState = "wait", connMsg = "";
+var slideIndex = 0;
+var myAnswer = null;      // 현재 슬라이드에 대해 내가 이미 낸 응답 (있으면)
+
+function currentSlide(){ return SLIDES[slideIndex] || SLIDES[0]; }
+
+function submitCurrent(payload){
+  var slide = currentSlide();
+  FBSync.submitAnswer(slide.id, payload);
+  myAnswer = Object.assign({}, myAnswer, payload);
+  render();
+}
+
+/* ============================= FORM BUILDERS ============================= */
+function buildForm(slide, container){
+  if(slide.kind==="choice" || slide.kind==="choiceplus"){
+    var list = el("div","opt-list");
+    slide.options.forEach(function(o){
+      var btn = el("button","opt-btn"+((myAnswer&&myAnswer.optionKey===o.k)?" sel":""), (o.em?o.em+" ":"")+esc(o.l)+"<span class=\"opt-check\">"+((myAnswer&&myAnswer.optionKey===o.k)?"✓ 선택됨":"")+"</span>");
+      btn.addEventListener("click", function(){ submitCurrent({optionKey:o.k}); });
+      list.appendChild(btn);
+    });
+    container.appendChild(list);
+    if(slide.kind==="choiceplus" && myAnswer && myAnswer.optionKey){
+      var f = el("div","field");
+      f.appendChild(el("label","",esc(slide.followup||"의견")));
+      var ta = document.createElement("textarea"); ta.value = (myAnswer&&myAnswer.note) || "";
+      f.appendChild(ta);
+      var sb = el("button","submit-btn","의견 보내기");
+      sb.addEventListener("click", function(){ submitCurrent({note: ta.value.trim()}); });
+      f.appendChild(sb);
+      container.appendChild(f);
+    }
+  } else if(slide.kind==="scale"){
+    var min = (slide.scale.min!=null)?slide.scale.min:0, max=(slide.scale.max!=null)?slide.scale.max:100;
+    var initVal = (myAnswer && myAnswer.value!=null) ? myAnswer.value : Math.round((min+max)/2);
+    var f2 = el("div","field"); f2.appendChild(el("label","",esc(slide.scale.promptShort)));
+    var row = el("div","range-row");
+    var range = document.createElement("input"); range.type="range"; range.min=min; range.max=max; range.value=initVal;
+    var valSpan = el("span","range-val", String(initVal));
+    range.addEventListener("input", function(){ valSpan.textContent = range.value; });
+    row.appendChild(range); row.appendChild(valSpan); f2.appendChild(row);
+    var sb2 = el("button","submit-btn","제출");
+    sb2.addEventListener("click", function(){ submitCurrent({value: parseFloat(range.value)}); });
+    f2.appendChild(sb2);
+    container.appendChild(f2);
+  } else if(slide.kind==="dualscale"){
+    slide.fields.forEach(function(fld){
+      var initVal = (myAnswer && myAnswer[fld.k]!=null) ? myAnswer[fld.k] : 50;
+      var f3 = el("div","field"); f3.appendChild(el("label","",esc(fld.l)));
+      var row = el("div","range-row");
+      var range = document.createElement("input"); range.type="range"; range.min=0; range.max=100; range.value=initVal;
+      range.dataset.k = fld.k;
+      var valSpan = el("span","range-val", String(initVal));
+      range.addEventListener("input", function(){ valSpan.textContent = range.value; });
+      row.appendChild(range); row.appendChild(valSpan); f3.appendChild(row);
+      container.appendChild(f3);
+      container._ranges = container._ranges || [];
+      container._ranges.push(range);
+    });
+    var sb3 = el("button","submit-btn","제출");
+    sb3.addEventListener("click", function(){
+      var payload = {};
+      (container._ranges||[]).forEach(function(r){ payload[r.dataset.k] = parseFloat(r.value); });
+      submitCurrent(payload);
+    });
+    container.appendChild(sb3);
+  } else if(slide.kind==="wordcloud"){
+    var f4 = el("div","field"); f4.appendChild(el("label","",esc(slide.wc.prompt)));
+    var inp = document.createElement("input"); inp.type="text"; inp.maxLength=24; inp.placeholder="짧게 한 단어 / 한 문장";
+    inp.value = (myAnswer && myAnswer.text) || "";
+    f4.appendChild(inp);
+    var sb4 = el("button","submit-btn","제출");
+    sb4.addEventListener("click", function(){ if(inp.value.trim()) submitCurrent({text: inp.value.trim()}); });
+    f4.appendChild(sb4);
+    container.appendChild(f4);
+  } else if(slide.kind==="dualwordcloud"){
+    var fA = el("div","field"); fA.appendChild(el("label","",esc(slide.wc.promptA)));
+    var inpA = document.createElement("input"); inpA.type="text"; inpA.maxLength=24; inpA.value=(myAnswer&&myAnswer.over)||"";
+    fA.appendChild(inpA); container.appendChild(fA);
+    var fB = el("div","field"); fB.appendChild(el("label","",esc(slide.wc.promptB)));
+    var inpB = document.createElement("input"); inpB.type="text"; inpB.maxLength=24; inpB.value=(myAnswer&&myAnswer.under)||"";
+    fB.appendChild(inpB); container.appendChild(fB);
+    var sb5 = el("button","submit-btn","제출");
+    sb5.addEventListener("click", function(){ submitCurrent({over:inpA.value.trim(), under:inpB.value.trim()}); });
+    container.appendChild(sb5);
+  } else if(slide.kind==="allocation"){
+    var inputs = {};
+    var sumNote = el("div","alloc-sum","");
+    function recompute(){
+      var sum=0; slide.alloc.cats.forEach(function(c){ sum += parseFloat(inputs[c.k].value)||0; });
+      sumNote.textContent = "합계 "+sum+" / 100";
+      sumNote.className = "alloc-sum"+(sum!==100?" warn":"");
+    }
+    slide.alloc.cats.forEach(function(c){
+      var row = el("div","alloc-row"); row.appendChild(el("div","al-l",esc(c.l)));
+      var inp = document.createElement("input"); inp.type="number"; inp.min=0; inp.max=100;
+      inp.value = (myAnswer && myAnswer.pct && myAnswer.pct[c.k]!=null) ? myAnswer.pct[c.k] : 0;
+      inp.addEventListener("input", recompute);
+      inputs[c.k]=inp; row.appendChild(inp); container.appendChild(row);
+    });
+    container.appendChild(sumNote); recompute();
+    var sb6 = el("button","submit-btn","제출"); sb6.style.marginTop="10px";
+    sb6.addEventListener("click", function(){
+      var pct = {}; slide.alloc.cats.forEach(function(c){ pct[c.k]=parseFloat(inputs[c.k].value)||0; });
+      submitCurrent({pct: pct});
+    });
+    container.appendChild(sb6);
+  } else if(slide.kind==="openthree"){
+    var areas = {};
+    slide.three.forEach(function(fld){
+      var f5 = el("div","field"); f5.appendChild(el("label","",esc(fld.l)));
+      var ta = document.createElement("textarea"); ta.value = (myAnswer && myAnswer[fld.k]) || "";
+      areas[fld.k]=ta; f5.appendChild(ta); container.appendChild(f5);
+    });
+    var sb7 = el("button","submit-btn","제출");
+    sb7.addEventListener("click", function(){
+      var payload = {}; slide.three.forEach(function(fld){ payload[fld.k]=areas[fld.k].value.trim(); });
+      submitCurrent(payload);
+    });
+    container.appendChild(sb7);
+  } else if(slide.kind==="sentence"){
+    var f6 = el("div","field"); f6.appendChild(el("label","",esc(slide.sentence.prefix)+" ___ "+esc(slide.sentence.suffix)));
+    var inp6 = document.createElement("input"); inp6.type="text"; inp6.maxLength=40;
+    inp6.value = (myAnswer && myAnswer.text) || "";
+    f6.appendChild(inp6); container.appendChild(f6);
+    var sb8 = el("button","submit-btn","제출");
+    sb8.addEventListener("click", function(){ if(inp6.value.trim()) submitCurrent({text: inp6.value.trim()}); });
+    f6.appendChild(sb8);
+    container.appendChild(f6);
+  }
+}
+
+/* ============================= RENDER ============================= */
+function render(){
+  app.innerHTML = "";
+  var slide = currentSlide();
+
+  var top = el("div","top");
+  top.appendChild(el("span","eyebrow","ACT "+slide.act+" · "+String(slideIndex+1).padStart(2,"0")+"/"+SLIDES.length));
+  var connLabel = connState==="ok" ? "연결됨" : connState==="err" ? "연결 오류" : "연결 중";
+  var conn = el("span","conn"); conn.setAttribute("data-state",connState);
+  conn.innerHTML = "<span class=\"dot\"></span>"+esc(connLabel);
+  top.appendChild(conn);
+  app.appendChild(top);
+
+  if(connState==="err"){
+    app.appendChild(el("div","err-box", esc(connMsg||"연결에 실패했습니다. 새로고침해주세요.")));
+    return;
+  }
+
+  var isInteractive = INTERACTIVE_KINDS.indexOf(slide.kind)>=0;
+
+  if(!isInteractive){
+    var wb = el("div","wait-box");
+    wb.appendChild(el("div","w-title","지금은 발표를 들어주세요"));
+    wb.appendChild(el("div","w-sub","곧 다음 질문이 여기에 자동으로 나타납니다."));
+    app.appendChild(wb);
+    return;
+  }
+
+  var wrap = el("div","wrap");
+  wrap.appendChild(el("div","q-title",esc(slide.title)));
+  if(slide.body && slide.body.length){
+    wrap.appendChild(el("div","q-sub", slide.body.map(esc).join("<br>")));
+  }
+  buildForm(slide, wrap);
+  if(myAnswer && Object.keys(myAnswer).length){
+    wrap.appendChild(el("div","done-note","✓ 제출됨 — 다시 선택하면 응답이 바뀝니다"));
+  }
+  app.appendChild(wrap);
+}
+
+function watchMyAnswerForCurrentSlide(){
+  myAnswer = null;
+  render();
+  var slide = currentSlide();
+  FBSync.getMyAnswer(slide.id, function(data){
+    if(currentSlide().id === slide.id){ myAnswer = data; render(); }
+  });
+}
+
+render();
+
+/* ============================= FIREBASE WIRE-UP ============================= */
+if(!FBSync.isConfigured()){
+  connState = "err"; connMsg = "설문 연결 준비 중입니다. 진행자에게 문의해주세요.";
+  render();
+} else {
+  FBSync.init(
+    function(uid){
+      connState = "ok"; render();
+      FBSync.watchState(function(data){
+        var newIndex = data.slideIndex || 0;
+        if(newIndex !== slideIndex){
+          slideIndex = newIndex;
+          watchMyAnswerForCurrentSlide();
+        } else {
+          render();
+        }
+      });
+    },
+    function(errMsg){ connState = "err"; connMsg = errMsg; render(); }
+  );
+}
+
+})();
+</script>
+</body>
+</html>

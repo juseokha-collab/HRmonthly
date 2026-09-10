@@ -1,0 +1,313 @@
+/* ============================================================
+   shared.js
+   공통 데이터(25장 슬라이드)와 순수 렌더링 헬퍼.
+   host.html 과 index.html(참여자용) 양쪽에서 그대로 불러다 씁니다.
+   ============================================================ */
+"use strict";
+
+var ACT_LABEL = {1:"PERSONAL INVESTOR",2:"INVESTMENT MEMO",3:"INVESTMENT COMMITTEE",4:"TO MYSELF"};
+
+var SLIDES = [
+{id:"s01",act:1,kind:"content",title:"나는 어디에 투자하고 있는가?",
+ body:["우리는 매일 무언가에 투자합니다.","돈, 시간, 에너지, 관계, 커리어 그리고 나 자신.","그런데 재미있는 것은 — 내가 중요하다고 생각하는 것과 다른 사람이 중요하다고 생각하는 것이 항상 같지는 않다는 것입니다."],
+ visual:{type:"pills",items:["MONEY","TIME","ENERGY","CAREER","RELATIONSHIP","ME"]},
+ caption:"투자는 돈으로만 하는 것이 아니다.",
+ note:["오늘은 회사 이야기를 조금 늦게 하겠습니다.","먼저 우리 자신을 하나의 투자자라고 생각해보겠습니다.","그리고 마지막에 이 질문을 우리 팀과 회사에 그대로 적용해보겠습니다."]},
+
+{id:"s02",act:1,kind:"choice",title:"1억 원이 생긴다면, 어디에 투자하시겠습니까?",
+ body:["조건은 하나입니다.","1억 원을 반드시 어딘가에 투자해야 합니다. 여러분이라면 어디를 선택하시겠습니까?"],
+ options:[{k:"stock",l:"주식"},{k:"realestate",l:"부동산"},{k:"deposit",l:"예금 / 채권"},{k:"business",l:"창업 / 사업"},{k:"self",l:"나 자신"},{k:"relationship",l:"가족 / 관계"},{k:"travel",l:"여행 / 경험"},{k:"etc",l:"기타"}],
+ caption:"같은 1억 원, 하지만 투자자의 목적은 모두 다르다.",
+ note:["어떤 선택이 맞는지가 중요한 게 아닙니다.","왜 그걸 선택했는지가 중요합니다.","여기서부터 사람마다 판단 기준이 다르다는 걸 볼 수 있습니다."]},
+
+{id:"s03",act:1,kind:"choice",title:"나는 무엇을 보고 투자하는가?",
+ body:["투자를 결정할 때 우리는 서로 다른 질문을 합니다.","성장할까? 안전할까? 돈을 벌어줄까?","그 밖에도 — 재미있는가, 의미가 있는가, 내가 잘 아는가, 내가 원하는 삶과 맞는가."],
+ visual:{type:"triangle",vertices:["성장성","안정성","수익성"],orbit:["재미","의미","시간","자유","인정","경험"]},
+ options:[{k:"growth",l:"성장성"},{k:"stability",l:"안정성"},{k:"profit",l:"수익성"}],
+ caption:"투자 판단에는 숫자만큼 개인의 목적과 가치관이 들어간다.",
+ note:["여러분은 성장성, 안정성, 수익성 중 무엇을 가장 중요하게 보시나요?","그리고 이 기준이 회사에서 일할 때도 똑같이 작동하고 있을까요?"]},
+
+{id:"s04",act:1,kind:"choice",title:"같은 회사를 보고도 판단은 달라진다",
+ body:["가상의 회사 A — 매출 성장률 +30%, 시장점유율 상승, 높은 변동성, 현재는 적자, 향후 시장 규모는 확대.","여러분이라면 이 회사에 투자하시겠습니까?"],
+ options:[{k:"strong",l:"적극 투자",em:"🟢"},{k:"partial",l:"일부 투자",em:"🟡"},{k:"watch",l:"관망",em:"⚪"},{k:"no",l:"투자하지 않음",em:"🔴"}],
+ caption:"같은 정보라도 목적과 관점에 따라 가치는 달라진다.",
+ note:["투자자 A에게는 '성장성'이 보이고, 투자자 B에게는 '위험성'이 보입니다.","둘 중 누가 틀렸다고 말하기 어렵습니다."]},
+
+{id:"s05",act:1,kind:"content",title:"기대한 가치와 실제 가치는 왜 다른가?",
+ body:["우리가 기대하는 것과 실제로 발생하는 결과 사이에는 차이가 있습니다.","그리고 그 사이에는 — 정보 · 기대 · 심리 · 타인의 평가 — 가 개입합니다."],
+ visual:{type:"flow",nodes:["실제 가치","내가 보는 가치","시장에 형성된 기대","실제 평가"]},
+ caption:"좋은 자산과 좋은 평가를 받는 자산은 항상 같은 것이 아니다.",
+ note:["이게 오늘 이야기하고 싶은 핵심입니다.","내가 생각하는 가치와 남들이 평가하는 가치가 다를 수 있습니다.","그런데 이건 투자뿐만 아니라 사람에게도 그대로 적용됩니다."]},
+
+{id:"s06",act:1,kind:"dualscale",title:"그렇다면 나는 나를 몇 점으로 평가할까?",
+ body:["현재 나의 회사 내 시장가치는 100점 만점에 몇 점일까요?","그리고 한 번 더 — 내가 생각하기에 다른 사람들이 평가하는 나의 점수는 몇 점일까요?"],
+ fields:[{k:"self",l:"① 내가 평가하는 나"},{k:"perceived",l:"② 내가 예상하는 타인의 평가"}],
+ caption:"Self Value vs. Perceived Value",
+ note:["두 점수가 같습니까?","차이가 있다면 왜 차이가 날까요?"]},
+
+{id:"s07",act:1,kind:"content",title:"내가 보는 나와 남이 보는 나는 다르다",
+ body:["우리는 나 자신을 평가할 때 다른 사람이 알 수 없는 정보까지 알고 있습니다 — 노력, 고민, 실패, 의도, 과정.","반면 다른 사람은 주로 결과, 행동, 영향, 함께 일한 경험을 봅니다."],
+ visual:{type:"matrix2",colHead:["남이 높게 평가","남이 낮게 평가"],rowHead:["내가 높게 평가","내가 낮게 평가"],cells:[["명확한 강점","평가 Gap"],["Hidden Value","개선 영역"]]},
+ caption:"평가의 차이는 거짓말이 아니라 '서로 다른 정보'에서 시작될 수 있다.",
+ note:["내가 잘한다고 생각하지만 남들이 잘 모르는 능력이 있을 수 있습니다.","반대로 내가 별것 아니라고 생각하지만 남들이 높게 평가하는 것도 있습니다."]},
+
+{id:"s08",act:1,kind:"content",title:"결국 가치는 누가 결정하는가?",
+ body:["내가 잘하는 것 ≠ 회사가 원하는 것","회사가 원하는 것 ≠ 고객이 돈을 내는 것","내가 생각하는 가치 ≠ 시장이 평가하는 가치"],
+ visual:{type:"chain",nodes:[{n:"나",v:"내가 만드는 가치"},{n:"회사",v:"조직이 인정하는 가치"},{n:"고객 / 시장",v:"시장이 지불하는 가치"}]},
+ caption:"가치는 만들어지는 것과 동시에 평가되어야 한다.",
+ note:["여기서부터 개인의 이야기가 조직의 이야기로 연결됩니다."]},
+
+{id:"s09",act:1,kind:"content",title:"우리는 서로 다른 정보를 가지고 나를 평가한다",
+ body:[],
+ visual:{type:"table",head:["평가자","주로 보는 것"],rows:[["나","노력 · 과정 · 고민"],["동료","협업 · 관계 · 실행"],["리더","결과 · 영향 · 성장"],["고객","문제 해결 · 체감 가치"],["시장","성과 · 경쟁력 · 가격"]]},
+ caption:"평가의 차이는 '누가 맞느냐'보다 '무엇을 보고 있느냐'의 차이일 수 있다.",
+ note:["내가 억울했던 평가가 있다면, 상대방은 나에게 없는 정보를 가지고 있었을 수도 있습니다."]},
+
+{id:"s10",act:1,kind:"content",title:"실제 가치보다 '기대'가 먼저 움직일 때가 있다",
+ body:["시장에서는 실제 가치뿐 아니라 '다른 사람들이 앞으로 어떻게 평가할 것인가'가 현재의 판단에 영향을 줍니다."],
+ visual:{type:"formula",terms:["실제 가치","미래에 대한 기대","대중의 관심"],result:"현재의 시장 평가"},
+ caption:"시장은 현재의 가치보다 미래에 대한 기대를 먼저 가격에 반영하기도 한다.",
+ note:["조직에서도 비슷합니다.","AI를 잘하는 사람, 영업을 잘하는 사람, 데이터를 잘하는 사람…","그런데 우리가 정말 중요하게 생각하는 것과 '요즘 중요하다고 하는 것'은 항상 같을까요?"]},
+
+{id:"s11",act:1,kind:"scale",title:"만약 나에게도 '주가'가 있다면?",
+ body:["현재 나의 주가 = 100","그렇다면, 1년 후 나의 주가는 얼마여야 할까요?"],
+ scale:{unit:"",promptShort:"1년 후 목표 주가 (현재=100 기준)",min:0,max:300},
+ caption:"주가를 올린다는 것은 결국 시장이 평가하는 나의 미래가치를 높이는 것이다.",
+ note:["열심히 하는 것과 주가가 오르는 것은 같은 이야기가 아닐 수 있습니다.","내가 투자한 시간과 에너지가 시장가치로 전환되고 있는지를 봐야 합니다."]},
+
+{id:"s12",act:1,kind:"content",title:"그런데 이 문제는 '우리 팀'에도 똑같이 있다",
+ body:[],
+ visual:{type:"bridge",left:["성장성","안정성","수익성","시장평가"],right:["성장성","안정성","수익성","시장평가"],leftLabel:"개인의 가치평가",rightLabel:"조직의 가치평가",center:"HR사업개발팀이라는 자산은\n지금 얼마짜리일까?"},
+ caption:"이제부터 우리는 '팀원'이 아니라 '투자자'의 시선으로 우리 팀을 보겠습니다.",
+ note:[]},
+
+{id:"s13",act:2,kind:"content",title:"HR사업개발팀 Investment Memo",
+ body:["우리가 지금 가지고 있는 것 — [2026년 현재 실적]"],
+ visual:{type:"stats",items:[
+   {k:"s13-rev",l:"매출",unit:""},{k:"s13-rate",l:"목표 대비 달성률",unit:"%"},{k:"s13-yoy",l:"전년 대비 성장률",unit:"%"},
+   {k:"s13-cust",l:"고객 수",unit:""},{k:"s13-new",l:"신규 고객",unit:""},{k:"s13-bm",l:"주요 BM",unit:"",text:true},
+   {k:"s13-newbiz",l:"신규사업",unit:"",text:true}]},
+ caption:"투자하기 전에 먼저 숫자를 본다.",
+ note:["여기서는 해석보다 팩트를 먼저 보겠습니다.","여러분이 외부 투자자라고 생각하고 이 숫자를 한번 봐주세요."]},
+
+{id:"s14",act:2,kind:"scale",title:"① 성장성 : 우리 팀은 앞으로 얼마나 커질 수 있는가?",
+ body:["현재의 크기보다 중요한 것은 앞으로 만들어낼 수 있는 크기입니다.","주요 지표: 매출 · 고객 · 사업 규모 · 신규 BM"],
+ visual:{type:"yearbars",years:["2024","2025","2026","2027"],keyPrefix:"s14-y"},
+ scale:{unit:"점",promptShort:"우리 팀의 성장성 점수",min:0,max:100},
+ caption:"과거 실적은 증명이고, 성장성은 미래에 대한 질문이다.",
+ note:[]},
+
+{id:"s15",act:2,kind:"wordcloud",title:"② 안정성 : 우리는 지속적으로 성장할 수 있는가?",
+ body:["성장만으로는 충분하지 않습니다.","고객은 안정적인가? 매출은 반복되는가? 특정 사업에 지나치게 의존하고 있지는 않은가? 사람이 바뀌어도 사업이 지속되는가?"],
+ wc:{prompt:"우리 팀의 가장 큰 리스크는 무엇이라고 생각합니까?"},
+ caption:"좋은 사업은 성장하면서 동시에 버틸 수 있어야 한다.",
+ note:[]},
+
+{id:"s16",act:2,kind:"content",title:"③ 수익성 : 우리는 '많이'가 아니라 '잘' 벌고 있는가?",
+ body:["매출 성장 ≠ 이익 성장","바쁘게 일함 ≠ 높은 생산성","고객이 많음 ≠ 좋은 BM"],
+ visual:{type:"bizTable",rows:["A","B","C"],cols:["매출","수익성","반복성","확장성"],keyPrefix:"s16"},
+ caption:"우리가 만든 매출 중, 무엇이 진짜 기업가치로 남는가?",
+ note:["이 부분은 특히 사업개발팀이 냉정하게 봐야 합니다.","매출을 만드는 능력과 좋은 BM을 만드는 능력은 다릅니다."]},
+
+{id:"s17",act:2,kind:"content",title:"우리가 중요하다고 생각하는 것과 고객이 돈을 내는 이유는 같은가?",
+ body:[],
+ visual:{type:"twocol",colHead:["우리가 생각하는 가치","고객이 느끼는 가치"],rows:4,keyPrefix:"s17"},
+ caption:"고객이 지갑을 여는 순간, 우리의 가치가 시장가치로 전환된다.",
+ note:["가능하다면 실제 고객의 말을 1~2개 넣습니다.","우리가 자랑하는 것보다 고객이 좋아하는 것을 봐야 합니다."]},
+
+{id:"s18",act:2,kind:"dualwordcloud",title:"우리가 과대평가하고 있는 것은 무엇인가?",
+ body:["'우리 팀이 중요하다고 생각하지만 실제 시장에서는 생각보다 중요하지 않은 것은?'","그리고 두 번째 질문 — '반대로 우리가 과소평가하고 있는 것은?'"],
+ wc:{promptA:"과대평가",promptB:"과소평가"},
+ caption:"성장은 새로운 것을 더하는 것뿐 아니라, 잘못된 믿음을 버리는 것에서도 시작된다.",
+ note:["여기서는 방어적으로 반응하지 않는 게 중요합니다.","이 질문에는 정답이 없습니다. 오늘은 여러분의 생각을 그대로 보고 싶습니다."]},
+
+{id:"s19",act:2,kind:"choiceplus",title:"그래서, 여러분이라면 우리 팀에 투자하시겠습니까?",
+ body:["지금까지 본 것을 종합하면, HR사업개발팀은 현재 좋은 투자처인가?"],
+ options:[{k:"strong",l:"적극 투자",em:"🟢"},{k:"watch-in",l:"투자하지만 지켜본다",em:"🟡"},{k:"proof",l:"조금 더 증명이 필요하다",em:"⚪"},{k:"no",l:"지금은 투자하지 않는다",em:"🔴"}],
+ followup:"투자하지 않는다면, 딱 하나 무엇이 바뀌어야 합니까?",
+ caption:"좋은 팀은 비판을 견디는 팀이 아니라, 비판을 성장의 정보로 바꾸는 팀이다.",
+ note:[]},
+
+{id:"s20",act:3,kind:"content",title:"2027년, 우리는 어디에 투자하려고 하는가?",
+ body:["2026년의 성과를 기반으로 2027년에는 선택과 집중이 필요합니다."],
+ visual:{type:"three",cols:[{h:"① 지켜야 할 것",items:["현재 BM","핵심 고객","안정적 매출"]},{h:"② 키워야 할 것",items:["성장 BM","신규 고객","확장 가능 사업"]},{h:"③ 새롭게 투자할 것",items:["신규 BM","AI","새로운 시장","새로운 역량"]}]},
+ caption:"전략은 '더 많이 하는 것'이 아니라 '어디에 더 투자할 것인가'를 결정하는 것이다.",
+ note:[]},
+
+{id:"s21",act:3,kind:"allocation",title:"여러분에게 100의 투자금이 있다면, 어디에 배분하시겠습니까?",
+ body:["100을 반드시 전부 배분해야 합니다."],
+ alloc:{cats:[{k:"existing",l:"기존 BM"},{k:"new",l:"신규 BM"},{k:"ai",l:"AI / 신기술"},{k:"cust",l:"고객 확대"},{k:"content",l:"콘텐츠 / 서비스"},{k:"people",l:"사람 / 조직"}]},
+ caption:"우리가 원하는 미래는 결국 우리가 어디에 자원을 배분하느냐에 의해 결정된다.",
+ note:["이제 여러분이 경영진입니다.","돈도 사람도 시간도 무한하지 않다고 생각하고 배분해주세요."]},
+
+{id:"s22",act:3,kind:"compare",title:"우리가 생각한 포트폴리오와 경영진의 포트폴리오는 얼마나 다른가?",
+ body:[],
+ compare:{rows:[{k:"existing",l:"기존 BM"},{k:"new",l:"신규 BM"},{k:"ai",l:"AI / 신기술"},{k:"cust",l:"고객 확대"},{k:"people",l:"사람 / 조직"}],from:"s21"},
+ caption:"차이는 갈등이 아니라, 서로 다른 정보를 가지고 있다는 증거일 수 있다.",
+ note:["누가 맞는지를 정하려는 것이 아닙니다.","왜 우리는 다르게 판단하는지를 보는 겁니다.","그 차이 속에 전략의 힌트가 있을 수 있습니다."]},
+
+{id:"s23",act:3,kind:"content",title:"2027년, 우리가 만들어야 할 가치는 무엇인가?",
+ body:["2027년의 목표는 단순히 '더 많이 팔기'가 아닙니다."],
+ visual:{type:"cards",items:[
+   {t:"성장",d:"새로운 시장과 고객"},{t:"수익",d:"더 좋은 수익구조"},{t:"반복",d:"한 번 만든 가치를 반복해서 활용"},
+   {t:"확장",d:"사람의 투입보다 빠르게 성장"},{t:"차별화",d:"다른 회사가 쉽게 따라올 수 없는 경쟁력"}]},
+ caption:"좋은 BM은 사람의 노력만큼 성장하는 것이 아니라, 노력보다 빠르게 성장한다.",
+ note:["여기가 2027년 핵심 메시지가 들어갈 자리입니다."]},
+
+{id:"s24",act:4,kind:"openthree",title:"회사의 미래와 나의 미래는 어디에서 만나는가?",
+ body:["회사에 필요한 역량과 내가 키우고 싶은 역량이 만나는 지점을 찾아봅니다."],
+ three:[{k:"more",l:"MORE — 앞으로 더 투자할 것"},{k:"less",l:"LESS — 앞으로 줄일 것"},{k:"new",l:"NEW — 새롭게 시작할 것"}],
+ caption:"회사가 성장한다고 내가 자동으로 성장하는 것은 아니다.",
+ note:["회사와 나의 성장이 만나는 지점을 찾는 것이 중요합니다.","회사가 원하는 사람과 내가 되고 싶은 사람이 완전히 다른 방향이라면 오래가기 어렵습니다."]},
+
+{id:"s25",act:4,kind:"sentence",title:"2027년의 나에게 투자한다면",
+ body:["나는 앞으로 무엇에 투자하겠습니다.","시간 · 역량 · 경험 · 관계 · 건강 · 돈 · 용기 · 새로운 도전"],
+ sentence:{prefix:"2027년의 나에게 투자한다면, 나는",suffix:"에 투자하겠다."},
+ caption:"결국 가장 중요한 투자 대상은 '나 자신'이다.",
+ note:["오늘 회사 이야기를 많이 했지만, 사실 오늘 이야기의 주인공은 회사가 아니었습니다.","우리가 어디에 시간을 쓰고, 어떤 일을 선택하고, 무엇을 중요하게 생각하고, 다른 사람의 평가를 어떻게 받아들이는지에 대한 이야기였습니다.","HR사업개발팀도 결국 사람들의 시간과 역량이 투자되는 하나의 자산입니다.","2027년에는 우리 팀의 가치도, 여러분 한 사람 한 사람의 가치도 지금보다 더 높아졌으면 좋겠습니다."]}
+];
+
+var INTERACTIVE_KINDS = ["choice","scale","dualscale","wordcloud","dualwordcloud","allocation","choiceplus","openthree","sentence"];
+
+function slideById(id){
+  for(var i=0;i<SLIDES.length;i++) if(SLIDES[i].id===id) return SLIDES[i];
+  return null;
+}
+
+/* ============================= DOM HELPERS ============================= */
+function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+/* ============================= VISUALS (content diagrams — host page only, static/editable blanks) ============================= */
+function renderVisual(container, v, blankFn){
+  if(!v) return;
+  if(v.type==="pills"){
+    var pr = el("div","pill-row");
+    v.items.forEach(function(t){ pr.appendChild(el("span","pill",esc(t))); });
+    container.appendChild(pr);
+  } else if(v.type==="triangle"){
+    var tw = el("div","triangle");
+    tw.appendChild(el("span","vx top",esc(v.vertices[0])));
+    tw.appendChild(el("span","vx bl",esc(v.vertices[1])));
+    tw.appendChild(el("span","vx br",esc(v.vertices[2])));
+    var positions=[["46%","18%"],["18%","54%"],["72%","30%"],["58%","70%"],["30%","78%"],["78%","62%"]];
+    v.orbit.forEach(function(w,i){ var s=el("span","orbit",esc(w)); var p=positions[i%positions.length]; s.style.left=p[0]; s.style.top=p[1]; tw.appendChild(s); });
+    container.appendChild(tw);
+  } else if(v.type==="flow"){
+    var fc = el("div","flow-chain");
+    v.nodes.forEach(function(n,i){ if(i>0) fc.appendChild(el("div","flow-arrow","↓")); fc.appendChild(el("div","flow-node",esc(n))); });
+    container.appendChild(fc);
+  } else if(v.type==="matrix2"){
+    var t = el("table","matrix2");
+    var thead = el("tr"); thead.appendChild(el("th","",""));
+    v.colHead.forEach(function(c){ thead.appendChild(el("th","",esc(c))); }); t.appendChild(thead);
+    v.rowHead.forEach(function(r,ri){
+      var tr = el("tr"); tr.appendChild(el("th","",esc(r)));
+      v.cells[ri].forEach(function(c){ tr.appendChild(el("td",ri===0?"hi":"",esc(c))); });
+      t.appendChild(tr);
+    });
+    container.appendChild(t);
+  } else if(v.type==="chain"){
+    var fc2 = el("div","flow-chain");
+    v.nodes.forEach(function(n,i){
+      if(i>0) fc2.appendChild(el("div","flow-arrow","↓ "+esc(n.v)+" ↓"));
+      fc2.appendChild(el("div","flow-node","<b>"+esc(n.n)+"</b>"));
+    });
+    container.appendChild(fc2);
+  } else if(v.type==="table"){
+    var tt = el("table","data-table");
+    var hr = el("tr"); v.head.forEach(function(h){ hr.appendChild(el("th","",esc(h))); }); tt.appendChild(hr);
+    v.rows.forEach(function(r){ var tr=el("tr"); r.forEach(function(c){ tr.appendChild(el("td","",esc(c))); }); tt.appendChild(tr); });
+    container.appendChild(tt);
+  } else if(v.type==="formula"){
+    var fw = el("div","flow-chain");
+    v.terms.forEach(function(t,i){ if(i>0) fw.appendChild(el("div","flow-arrow","+")); fw.appendChild(el("div","flow-node",esc(t))); });
+    fw.appendChild(el("div","flow-arrow","↓"));
+    fw.appendChild(el("div","flow-node","<b>"+esc(v.result)+"</b>"));
+    container.appendChild(fw);
+  } else if(v.type==="bridge"){
+    var bw = el("div","card-row");
+    var lc = el("div","value-card"); lc.appendChild(el("h4","",esc(v.leftLabel)));
+    v.left.forEach(function(w){ lc.appendChild(el("p","",esc(w))); });
+    var rc = el("div","value-card"); rc.appendChild(el("h4","",esc(v.rightLabel)));
+    v.right.forEach(function(w){ rc.appendChild(el("p","",esc(w))); });
+    bw.appendChild(lc); bw.appendChild(rc); container.appendChild(bw);
+    var q = el("div","slide-title", esc(v.center).replace(/\n/g,"<br>")); q.style.marginTop="14px"; q.style.fontSize="24px";
+    container.appendChild(q);
+  } else if(v.type==="stats"){
+    var sg = el("div","stat-grid");
+    v.items.forEach(function(it){
+      var tile = el("div","stat-tile");
+      tile.appendChild(el("div","st-k",esc(it.l)));
+      var vwrap = el("div","st-v");
+      if(blankFn) vwrap.appendChild(blankFn(it.k,{placeholder:it.text?"내용 입력":"0"}));
+      if(it.unit) vwrap.appendChild(document.createTextNode(it.unit));
+      tile.appendChild(vwrap);
+      sg.appendChild(tile);
+    });
+    container.appendChild(sg);
+  } else if(v.type==="yearbars"){
+    var mb = el("div","mini-bars");
+    v.years.forEach(function(y){
+      var col = el("div","mini-bar");
+      var track = el("div","mb-track");
+      var fill = el("div","mb-fill"); fill.style.height = "2%";
+      track.appendChild(fill); col.appendChild(track);
+      var inputWrap = el("div","");
+      if(blankFn) inputWrap.appendChild(blankFn(v.keyPrefix+y,{placeholder:"0"}));
+      col.appendChild(inputWrap);
+      col.appendChild(el("div","mb-year",esc(y)));
+      mb.appendChild(col);
+    });
+    container.appendChild(mb);
+  } else if(v.type==="bizTable"){
+    var bt = el("table","data-table");
+    var hr2 = el("tr"); hr2.appendChild(el("th","","사업")); v.cols.forEach(function(c){ hr2.appendChild(el("th","",esc(c))); }); bt.appendChild(hr2);
+    v.rows.forEach(function(r){
+      var tr = el("tr"); tr.appendChild(el("td","","<b>"+esc(r)+"</b>"));
+      v.cols.forEach(function(c){ var td=el("td",""); if(blankFn) td.appendChild(blankFn(v.keyPrefix+"-"+r+"-"+c)); tr.appendChild(td); });
+      bt.appendChild(tr);
+    });
+    container.appendChild(bt);
+  } else if(v.type==="twocol"){
+    var tc = el("table","data-table");
+    var hr3 = el("tr"); v.colHead.forEach(function(h){ hr3.appendChild(el("th","",esc(h))); }); tc.appendChild(hr3);
+    for(var i=0;i<v.rows;i++){
+      var tr = el("tr");
+      var td1=el("td",""); if(blankFn) td1.appendChild(blankFn(v.keyPrefix+"-l"+i,{placeholder:"우리 생각"})); tr.appendChild(td1);
+      var td2=el("td",""); if(blankFn) td2.appendChild(blankFn(v.keyPrefix+"-r"+i,{placeholder:"고객 반응"})); tr.appendChild(td2);
+      tc.appendChild(tr);
+    }
+    container.appendChild(tc);
+  } else if(v.type==="three"){
+    var thc = el("div","three-col");
+    v.cols.forEach(function(c){
+      var box = el("div","tc"); box.appendChild(el("h4","",esc(c.h)));
+      var ul = el("ul"); c.items.forEach(function(it){ ul.appendChild(el("li","",esc(it))); }); box.appendChild(ul);
+      thc.appendChild(box);
+    });
+    container.appendChild(thc);
+  } else if(v.type==="cards"){
+    var cr = el("div","card-row");
+    v.items.forEach(function(it){
+      var c = el("div","value-card"); c.appendChild(el("h4","",esc(it.t))); c.appendChild(el("p","",esc(it.d))); cr.appendChild(c);
+    });
+    container.appendChild(cr);
+  }
+}
+
+function wordCloudEl(words){
+  var counts = {};
+  words.forEach(function(w){ var k=String(w||"").trim(); if(!k) return; counts[k]=(counts[k]||0)+1; });
+  var keys = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];});
+  var max = Math.max.apply(null, keys.map(function(k){return counts[k];}).concat([1]));
+  var c = el("div","cloud");
+  if(!keys.length){ c.appendChild(el("div","empty-note","아직 입력된 응답이 없습니다")); return c; }
+  keys.forEach(function(k){
+    var size = 13 + (counts[k]/max)*22;
+    var t = el("span","tag", esc(k)+(counts[k]>1?" ×"+counts[k]:""));
+    t.style.fontSize = size+"px"; t.style.fontWeight = counts[k]>1?"600":"400";
+    c.appendChild(t);
+  });
+  return c;
+}

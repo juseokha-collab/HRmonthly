@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나는 어디에 투자하고 있는가 — 진행자 화면</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F3F6F2; --paper-raised:#FFFFFF; --ink:#14181C; --ink-soft:#55606A; --ink-faint:#8B95A0;
+    --rule:#D9DEDA; --up:#C4351F; --up-soft:#F7E1DD; --down:#28489C; --down-soft:#DEE6F7;
+    --highlight:#8A5F0B; --highlight-soft:#F3E6C8; --navy:#0F2540; --shadow:rgba(20,24,28,.10);
+    --ok:#1E7A3D; --ok-soft:#DCF0E2;
+    --font-d:'Gowun Batang',serif; --font-b:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-m:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#14171A; --paper-raised:#1C2024; --ink:#ECEFEC; --ink-soft:#ABB4BB; --ink-faint:#707A82;
+      --rule:#2A3034; --up:#E8664F; --up-soft:#3A211D; --down:#7FA3FF; --down-soft:#1B2740;
+      --highlight:#E3AC4C; --highlight-soft:#3A2E12; --navy:#CFE0F5; --shadow:rgba(0,0,0,.45);
+      --ok:#4FC27B; --ok-soft:#173325;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14171A; --paper-raised:#1C2024; --ink:#ECEFEC; --ink-soft:#ABB4BB; --ink-faint:#707A82;
+    --rule:#2A3034; --up:#E8664F; --up-soft:#3A211D; --down:#7FA3FF; --down-soft:#1B2740;
+    --highlight:#E3AC4C; --highlight-soft:#3A2E12; --navy:#CFE0F5; --shadow:rgba(0,0,0,.45);
+    --ok:#4FC27B; --ok-soft:#173325;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-b);}
+  #app{min-height:100vh;background:var(--paper);color:var(--ink);}
+  h1,h2,h3{text-wrap:balance;margin:0;font-weight:600;}
+  p{margin:0;}
+  button{font-family:var(--font-b);cursor:pointer;}
+  ::selection{background:var(--highlight-soft);}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--rule);font-family:var(--font-m);font-size:12px;color:var(--ink-soft);gap:12px;flex-wrap:wrap;}
+  .act-badge{letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid var(--rule);}
+  .act-badge[data-act="1"]{color:var(--up);border-color:var(--up-soft);}
+  .act-badge[data-act="2"]{color:var(--navy);border-color:var(--rule);}
+  .act-badge[data-act="3"]{color:var(--highlight);border-color:var(--highlight-soft);}
+  .act-badge[data-act="4"]{color:var(--ink-soft);}
+  .counter{font-variant-numeric:tabular-nums;letter-spacing:.04em;}
+  .top-right{display:flex;gap:10px;align-items:center;}
+  .conn-badge{border-radius:999px;padding:5px 11px;font-size:11px;display:flex;align-items:center;gap:6px;border:1px solid var(--rule);}
+  .conn-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);}
+  .conn-badge[data-state="ok"]{color:var(--ok);border-color:var(--ok-soft);} .conn-badge[data-state="ok"] .dot{background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft);}
+  .conn-badge[data-state="wait"] .dot{background:var(--highlight);}
+  .conn-badge[data-state="err"]{color:var(--up);border-color:var(--up-soft);} .conn-badge[data-state="err"] .dot{background:var(--up);}
+  .join-btn{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:6px 12px;font-family:var(--font-m);font-size:12px;color:var(--ink);}
+
+  .ticker{overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--rule);background:var(--paper-raised);font-family:var(--font-m);font-size:11px;letter-spacing:.08em;color:var(--ink-faint);padding:6px 0;}
+  .ticker-track{display:inline-block;padding-left:100%;animation:ticker 26s linear infinite;}
+  @media (prefers-reduced-motion:reduce){.ticker-track{animation:none;padding-left:16px;}}
+  @keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+  .ticker-track span{margin-right:36px;}
+  .ticker-track span b{color:var(--up);}
+
+  .stage{min-height:100vh;display:flex;flex-direction:column;}
+  .stage-body{flex:1;display:grid;grid-template-columns:1.05fr 1fr;gap:0;min-height:0;}
+  .stage-body.single{grid-template-columns:1fr;}
+  .stage-main{padding:52px 48px 32px;overflow:auto;display:flex;flex-direction:column;gap:20px;justify-content:flex-start;}
+  .stage-side{padding:52px 40px 32px;border-left:1px solid var(--rule);overflow:auto;display:flex;flex-direction:column;gap:16px;justify-content:flex-start;background:var(--paper-raised);}
+  .slide-eyebrow{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;}
+  .slide-title{font-family:var(--font-d);font-size:clamp(24px,3.1vw,40px);line-height:1.3;}
+  .slide-body{font-size:16px;line-height:1.85;color:var(--ink-soft);max-width:62ch;}
+  .slide-body .ln{margin-bottom:2px;}
+  .slide-caption{font-family:var(--font-m);font-size:13px;color:var(--ink-faint);border-left:2px solid var(--highlight);padding-left:10px;margin-top:4px;}
+  .host-note{max-width:56ch;font-size:12.5px;color:var(--ink-faint);background:var(--paper-raised);border:1px dashed var(--rule);border-radius:10px;padding:9px 13px;margin-top:8px;}
+  .host-note b{color:var(--ink-soft);}
+  .stage-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--rule);gap:10px;}
+  .nav-cluster{display:flex;gap:8px;align-items:center;}
+  .nav-btn{border:1px solid var(--rule);background:var(--paper-raised);border-radius:8px;padding:8px 14px;font-family:var(--font-m);font-size:13px;color:var(--ink);}
+  .nav-btn:disabled{opacity:.35;cursor:default;}
+  .nav-btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .icon-btn{border:1px solid var(--rule);background:var(--paper-raised);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--ink-soft);}
+  .progress-rail{flex:1;height:3px;background:var(--rule);border-radius:2px;margin:0 16px;position:relative;overflow:hidden;}
+  .progress-fill{position:absolute;inset:0 auto 0 0;background:var(--up);border-radius:2px;}
+
+  .qr-overlay{position:fixed;inset:0;background:rgba(10,12,14,.62);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .qr-box{background:var(--paper-raised);border-radius:18px;padding:32px 36px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-width:360px;width:100%;}
+  .qr-box #qrcode{padding:14px;background:#fff;border-radius:10px;}
+  .qr-title{font-family:var(--font-d);font-size:20px;text-align:center;}
+  .qr-sub{font-size:12.5px;color:var(--ink-faint);text-align:center;line-height:1.6;word-break:break-all;}
+  .qr-close{margin-top:6px;}
+
+  .poll-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .poll-hint{font-family:var(--font-m);font-size:11.5px;color:var(--ink-faint);line-height:1.7;display:flex;align-items:center;gap:7px;}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--up);display:inline-block;animation:pulse 1.6s ease-in-out infinite;flex:none;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .pct-sign{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);margin-left:6px;}
+  .field-label{font-family:var(--font-m);font-size:11.5px;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;display:block;}
+  .stat-pair{display:flex;gap:16px;}
+  .stat-pair .sp-item{flex:1;border:1px solid var(--rule);border-radius:10px;padding:12px 14px;background:var(--paper);}
+  .stat-pair .sp-item .sp-l{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);}
+  .stat-pair .sp-item .sp-v{font-family:var(--font-m);font-size:24px;color:var(--ink);width:100%;padding:3px 0 0;font-variant-numeric:tabular-nums;}
+  .delta-note{font-family:var(--font-m);font-size:12.5px;color:var(--ink-soft);}
+
+  .wall{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
+  .wall-item{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 13px;font-size:14px;max-width:280px;box-shadow:0 1px 2px var(--shadow);}
+  .wall.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;}
+  .wall-col h4{font-family:var(--font-m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;}
+  .wall-col .wall-item{margin-bottom:8px;width:100%;}
+  .empty-note{font-size:13px;color:var(--ink-faint);}
+
+  .cloud{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;}
+  .cloud .tag{font-family:var(--font-b);color:var(--ink);opacity:.9;}
+  .cloud-pair{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .cloud-pair h4{font-family:var(--font-m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+  .cloud-pair .over h4{color:var(--up);} .cloud-pair .under h4{color:var(--down);}
+
+  .bars{display:flex;flex-direction:column;gap:10px;}
+  .bar-row{display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:10px;font-size:13px;}
+  .bar-track{height:16px;background:var(--rule);border-radius:4px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--up);border-radius:4px;transition:width .4s ease;}
+  .resp-count{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);}
+
+  .pill-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .pill{font-family:var(--font-m);font-size:13px;letter-spacing:.04em;border:1px solid var(--rule);border-radius:999px;padding:7px 14px;background:var(--paper-raised);}
+  .triangle{position:relative;height:220px;max-width:360px;margin:6px 0;}
+  .triangle .vx{position:absolute;font-family:var(--font-m);font-weight:600;font-size:14px;background:var(--ink);color:var(--paper);padding:6px 12px;border-radius:999px;}
+  .triangle .vx.top{top:0;left:50%;transform:translateX(-50%);}
+  .triangle .vx.bl{bottom:0;left:0;} .triangle .vx.br{bottom:0;right:0;}
+  .triangle .orbit{position:absolute;font-size:12px;color:var(--ink-faint);font-family:var(--font-m);}
+  .flow-chain{display:flex;flex-direction:column;gap:0;}
+  .flow-node{border:1px solid var(--rule);background:var(--paper-raised);border-radius:10px;padding:11px 15px;font-size:14.5px;max-width:44ch;}
+  .flow-arrow{font-family:var(--font-m);color:var(--ink-faint);padding:4px 0 4px 18px;font-size:13px;}
+  .data-table{border-collapse:collapse;width:100%;font-size:14px;}
+  .data-table th,.data-table td{border-bottom:1px solid var(--rule);padding:9px 10px;text-align:left;vertical-align:top;}
+  .data-table th{font-family:var(--font-m);font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+  .matrix2{border-collapse:collapse;width:100%;max-width:520px;}
+  .matrix2 th,.matrix2 td{border:1px solid var(--rule);padding:14px;font-size:13.5px;text-align:center;}
+  .matrix2 th{background:var(--paper-raised);font-family:var(--font-m);font-size:11.5px;color:var(--ink-soft);font-weight:600;}
+  .matrix2 td.hi{background:var(--up-soft);color:var(--up);font-weight:600;}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .stat-tile{border:1px solid var(--rule);border-radius:10px;padding:14px 16px;background:var(--paper-raised);}
+  .stat-tile .st-k{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);letter-spacing:.06em;text-transform:uppercase;}
+  .stat-tile .st-v{font-family:var(--font-m);font-size:22px;margin-top:4px;font-variant-numeric:tabular-nums;}
+  .blank{display:inline-block;min-width:3.4em;border:none;border-bottom:1.5px dashed var(--ink-faint);background:transparent;font-family:var(--font-m);font-size:inherit;color:var(--ink);padding:0 3px;font-variant-numeric:tabular-nums;}
+  .blank:focus{outline:none;border-bottom-color:var(--up);border-bottom-style:solid;}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .three-col .tc{border:1px solid var(--rule);border-radius:12px;padding:16px;background:var(--paper-raised);}
+  .three-col h4{font-family:var(--font-m);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;}
+  .three-col ul{margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:var(--ink-soft);}
+  .card-row{display:flex;flex-wrap:wrap;gap:12px;}
+  .value-card{border:1px solid var(--rule);border-radius:12px;padding:14px 16px;min-width:150px;flex:1;background:var(--paper-raised);}
+  .value-card h4{font-family:var(--font-m);font-size:13px;color:var(--up);margin-bottom:5px;}
+  .value-card p{font-size:13px;color:var(--ink-soft);line-height:1.6;}
+  .mini-bars{display:flex;align-items:flex-end;gap:10px;height:120px;margin-top:8px;}
+  .mini-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%;}
+  .mini-bar .mb-track{width:100%;background:var(--rule);border-radius:4px 4px 0 0;position:relative;flex:1;display:flex;align-items:flex-end;}
+  .mini-bar .mb-fill{width:100%;background:var(--up);border-radius:4px 4px 0 0;min-height:2px;}
+  .mini-bar .mb-year{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);}
+
+  [data-act="2"] .memo-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:6px;font-family:var(--font-m);}
+  [data-act="2"] .memo-head .m-l{font-size:12px;letter-spacing:.1em;text-transform:uppercase;}
+  [data-act="2"] .memo-head .m-r{font-size:11px;color:var(--up);letter-spacing:.12em;}
+  [data-act="2"] .slide-title{font-family:var(--font-b);font-weight:700;}
+
+  [data-act="3"] .cover-band{background:var(--navy);color:#EDEFEC;border-radius:14px;padding:22px 26px;margin-bottom:4px;}
+  :root:not([data-theme="dark"]) [data-act="3"] .cover-band{background:#0F2540;color:#EDEFEC;}
+  [data-act="3"] .cover-band .slide-eyebrow{color:#9FB4D6;}
+  [data-act="3"] .cover-band .slide-title{color:#F5F1E3;}
+  [data-act="3"] .cover-band .slide-body{color:#C7D3E4;}
+
+  [data-act="4"] .stage-main{align-items:center;text-align:center;padding:60px 40px;}
+  [data-act="4"] .slide-title{font-size:clamp(28px,4.4vw,48px);max-width:16ch;}
+  [data-act="4"] .slide-body{max-width:46ch;}
+
+  @media (max-width:920px){
+    .stage-body{grid-template-columns:1fr;}
+    .stage-side{border-left:none;border-top:1px solid var(--rule);}
+    .stat-grid,.three-col{grid-template-columns:repeat(2,1fr);}
+    .cloud-pair{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="firebase-config.js"></script>
+<script src="shared.js"></script>
+<script src="firebase-sync.js"></script>
+<script>
+(function(){
+"use strict";
+
+var app = document.getElementById("app");
+
+/* ============================= HOST-LOCAL (this device only) state ============================= */
+/* 진행자가 직접 타이핑하는 숫자(매출 등)와 슬라이드 위치는 이 브라우저에만 저장됩니다.
+   참여자들이 실시간으로 채워 넣는 설문 응답은 Firestore(allAnswers)에서 옵니다. */
+var LOCAL_KEY = "hrbd_host_local_v1";
+var local = { slideIndex:0, data:{} };
+(function loadLocal(){
+  try{ var raw = localStorage.getItem(LOCAL_KEY); if(raw){ var p=JSON.parse(raw); local.slideIndex=p.slideIndex||0; local.data=p.data||{}; } }catch(e){}
+})();
+function persistLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); }catch(e){} }
+
+var allAnswers = [];      // Firestore 응답 전체 캐시 (실시간)
+var connState = "wait";   // wait | ok | err
+var connMsg = "";
+var qrOpen = false;
+var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
+
+document.addEventListener("focusout", function(){
+  setTimeout(function(){
+    if(pendingRender){ pendingRender=false; render(); }
+  }, 0);
+});
+
+function currentSlide(){ return SLIDES[local.slideIndex]; }
+
+/* ============================= NAV ============================= */
+function goTo(i){
+  if(i<0||i>=SLIDES.length) return;
+  local.slideIndex = i; persistLocal();
+  FBSync.setSlideIndex(i); // 참여자 화면에 즉시 반영
+  render();
+}
+document.addEventListener("keydown", function(e){
+  var tag = (document.activeElement && document.activeElement.tagName) || "";
+  if(tag==="INPUT" || tag==="TEXTAREA") return;
+  if(e.key==="ArrowRight") goTo(local.slideIndex+1);
+  if(e.key==="ArrowLeft") goTo(local.slideIndex-1);
+});
+
+/* ============================= 진행자 전용 로컬 입력(blank) — 매출 등 발표자 타이핑 수치 ============================= */
+function blank(key,opts){
+  opts = opts||{};
+  var val = local.data[key]!=null ? local.data[key] : "";
+  var w = el("input","blank");
+  w.value = val; w.placeholder = opts.placeholder||"—";
+  w.style.width = (Math.max(3, (String(val||opts.placeholder||"").length))+1.4)+"ch";
+  w.addEventListener("input", function(){ w.style.width=(Math.max(3,w.value.length)+1.4)+"ch"; });
+  w.addEventListener("blur", function(){ local.data[key]=w.value; persistLocal(); });
+  return w;
+}
+
+/* ============================= 실시간 결과 집계 패널 (읽기 전용, Firestore 구독으로 자동 갱신) ============================= */
+function numOf(v){ var n = parseFloat(v); return isNaN(n) ? null : n; }
+function avg(arr){ var v = arr.filter(function(n){return n!=null;}); if(!v.length) return null; return v.reduce(function(a,b){return a+b;},0)/v.length; }
+
+function resultsPanel(slide){
+  var wrap = el("div","");
+  var docs = allAnswers.filter(function(d){ return d.slideId===slide.id; });
+
+  var head = el("div","poll-head");
+  var hint = el("div","poll-hint"); hint.innerHTML = "<span class=\"live-dot\"></span> 실시간 응답 · 자동 반영 · "+docs.length+"명";
+  head.appendChild(hint);
+  var resetBtn = el("button","icon-btn","초기화");
+  resetBtn.addEventListener("click", function(){
+    if(!confirm("이 슬라이드의 응답을 모두 삭제할까요? 참여자 화면에서도 사라집니다.")) return;
+    FBSync.clearSlideAnswers(slide.id, allAnswers);
+  });
+  head.appendChild(resetBtn);
+  wrap.appendChild(head);
+
+  var body = el("div",""); body.style.marginTop="14px"; wrap.appendChild(body);
+
+  if(!docs.length){
+    body.appendChild(el("div","empty-note","아직 참여자 응답이 없습니다 — QR로 접속하면 여기에 자동으로 나타납니다."));
+    return wrap;
+  }
+
+  if(slide.kind==="choice" || slide.kind==="choiceplus"){
+    var counts = {}; slide.options.forEach(function(o){ counts[o.k]=0; });
+    docs.forEach(function(d){ if(d.optionKey!=null && counts.hasOwnProperty(d.optionKey)) counts[d.optionKey]++; });
+    var total = docs.length;
+    var max = Math.max.apply(null, slide.options.map(function(o){return counts[o.k];}).concat([1]));
+    var bars = el("div","bars");
+    slide.options.forEach(function(o){
+      var count = counts[o.k]; var pct = total? Math.round(count/total*100) : 0;
+      var row = el("div","bar-row");
+      row.appendChild(el("div","",( o.em?o.em+" ":"")+esc(o.l)));
+      var track = el("div","bar-track"); var fill = el("div","bar-fill"); fill.style.width=(count/max*100)+"%"; track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el("div","", count+"<span class=\"pct-sign\">"+pct+"%</span>"));
+      bars.appendChild(row);
+    });
+    body.appendChild(bars);
+    if(slide.kind==="choiceplus"){
+      var notes = docs.map(function(d){return d.note;}).filter(Boolean);
+      if(notes.length){
+        var fl = el("span","field-label","의견 모음"); fl.style.marginTop="14px"; fl.style.display="block"; body.appendChild(fl);
+        var tw = el("div","wall"); tw.style.marginTop="8px";
+        notes.forEach(function(n){ tw.appendChild(el("div","wall-item",esc(n))); });
+        body.appendChild(tw);
+      }
+    }
+  } else if(slide.kind==="scale"){
+    var values = docs.map(function(d){ return numOf(d.value); });
+    var pair = el("div","stat-pair");
+    var it1 = el("div","sp-item"); it1.appendChild(el("div","sp-l","평균 점수"));
+    it1.appendChild(el("div","sp-v", avg(values)!=null? avg(values).toFixed(1) : "—"));
+    var it2 = el("div","sp-item"); it2.appendChild(el("div","sp-l","응답 인원"));
+    it2.appendChild(el("div","sp-v", String(docs.length)));
+    pair.appendChild(it1); pair.appendChild(it2);
+    body.appendChild(pair);
+  } else if(slide.kind==="dualscale"){
+    var selfs = docs.map(function(d){ return numOf(d.self); });
+    var percs = docs.map(function(d){ return numOf(d.perceived); });
+    var pair2 = el("div","stat-pair");
+    slide.fields.forEach(function(f){
+      var it = el("div","sp-item"); it.appendChild(el("div","sp-l",esc(f.l)));
+      var v = f.k==="self" ? avg(selfs) : avg(percs);
+      it.appendChild(el("div","sp-v", v!=null? v.toFixed(1) : "—"));
+      pair2.appendChild(it);
+    });
+    body.appendChild(pair2);
+    var a = avg(selfs), b = avg(percs);
+    if(a!=null && b!=null){
+      var diff = Math.round((a-b)*10)/10;
+      var dn = el("div","delta-note"); dn.style.marginTop="10px";
+      dn.textContent = diff===0 ? "차이 없음 — 내가 보는 나와 남이 보는 나가 같습니다." : (diff>0? "평균적으로 나를 "+diff+"점 더 높게 봅니다.":"평균적으로 남들이 나를 "+(-diff)+"점 더 높게 봅니다.");
+      body.appendChild(dn);
+    }
+  } else if(slide.kind==="wordcloud"){
+    var texts = docs.map(function(d){ return d.text; }).filter(Boolean);
+    body.appendChild(wordCloudEl(texts));
+  } else if(slide.kind==="dualwordcloud"){
+    var cp = el("div","cloud-pair");
+    var overCol = el("div","over"); overCol.appendChild(el("h4","","과대평가"));
+    overCol.appendChild(wordCloudEl(docs.map(function(d){return d.over;}).filter(Boolean)));
+    var underCol = el("div","under"); underCol.appendChild(el("h4","","과소평가"));
+    underCol.appendChild(wordCloudEl(docs.map(function(d){return d.under;}).filter(Boolean)));
+    cp.appendChild(overCol); cp.appendChild(underCol);
+    body.appendChild(cp);
+  } else if(slide.kind==="allocation"){
+    var bars3 = el("div","bars");
+    slide.alloc.cats.forEach(function(c){
+      var vals = docs.map(function(d){ return d.pct ? numOf(d.pct[c.k]) : null; });
+      var a2 = avg(vals);
+      var row = el("div","bar-row");
+      row.appendChild(el("div","",esc(c.l)));
+      var track=el("div","bar-track"); var fill=el("div","bar-fill"); fill.style.width=Math.min(100,a2||0)+"%"; track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el("div","", (a2!=null? a2.toFixed(0):"—")+"<span class=\"pct-sign\">%</span>"));
+      bars3.appendChild(row);
+    });
+    body.appendChild(bars3);
+  } else if(slide.kind==="openthree"){
+    var wc2 = el("div","wall cols");
+    slide.three.forEach(function(f){
+      var col = el("div","wall-col");
+      col.appendChild(el("h4","",esc(f.l.split(" — ")[0])));
+      docs.map(function(d){return d[f.k];}).filter(Boolean).forEach(function(t){ col.appendChild(el("div","wall-item",esc(t))); });
+      wc2.appendChild(col);
+    });
+    body.appendChild(wc2);
+  } else if(slide.kind==="sentence"){
+    var wall = el("div","wall");
+    docs.map(function(d){return d.text;}).filter(Boolean).forEach(function(t){
+      wall.appendChild(el("div","wall-item",esc(slide.sentence.prefix)+" <b>"+esc(t)+"</b> "+esc(slide.sentence.suffix)));
+    });
+    body.appendChild(wall);
+  }
+  return wrap;
+}
+
+function allocAverages(){
+  var s21 = slideById("s21");
+  var docs = allAnswers.filter(function(d){ return d.slideId==="s21"; });
+  var out = {};
+  s21.alloc.cats.forEach(function(c){
+    var vals = docs.map(function(d){ return d.pct ? numOf(d.pct[c.k]) : null; });
+    out[c.k] = avg(vals);
+  });
+  return out;
+}
+
+function compareVisual(slide){
+  var wrap = el("div","");
+  var teamAvg = allocAverages();
+  var t = el("table","data-table");
+  var hr = el("tr"); ["투자 영역","Team (참여자 평균)","Management"].forEach(function(h){ hr.appendChild(el("th","",esc(h))); }); t.appendChild(hr);
+  slide.compare.rows.forEach(function(r){
+    var tr = el("tr");
+    tr.appendChild(el("td","","<b>"+esc(r.l)+"</b>"));
+    var teamVal = teamAvg[r.k];
+    tr.appendChild(el("td","", teamVal!=null? teamVal.toFixed(0)+"%" : "—"));
+    var td3 = el("td",""); var b = blank("s22-mgmt-"+r.k,{placeholder:"0"}); td3.appendChild(b); td3.appendChild(document.createTextNode("%"));
+    tr.appendChild(td3);
+    t.appendChild(tr);
+  });
+  wrap.appendChild(t);
+  wrap.appendChild(el("div","resp-count","Team 값은 21번 슬라이드 참여자 응답의 평균입니다 (실시간) · Management 값은 진행자가 직접 입력"));
+  return wrap;
+}
+
+/* ============================= 참여 QR 오버레이 ============================= */
+function joinUrl(){
+  return location.href.replace(/host\.html(\?.*)?(#.*)?$/i, "index.html");
+}
+function qrOverlay(){
+  var ov = el("div","qr-overlay");
+  var box = el("div","qr-box");
+  box.appendChild(el("div","qr-title","참여 QR"));
+  box.appendChild(el("div","qr-sub","로그인 없이 이 QR을 찍거나 아래 링크로 들어오면 바로 참여할 수 있습니다."));
+  var qc = el("div",""); qc.id="qrcode-host"; box.appendChild(qc);
+  try{ if(window.QRCode) new QRCode(qc, {text: joinUrl(), width:180, height:180, colorDark:"#14181C", colorLight:"#ffffff"}); }catch(e){}
+  box.appendChild(el("div","qr-sub",esc(joinUrl())));
+  var close = el("button","nav-btn qr-close","닫기");
+  close.addEventListener("click", function(){ qrOpen=false; render(); });
+  box.appendChild(close);
+  ov.appendChild(box);
+  ov.addEventListener("click", function(e){ if(e.target===ov){ qrOpen=false; render(); } });
+  return ov;
+}
+
+/* ============================= MAIN RENDER ============================= */
+function render(){
+  app.innerHTML = "";
+  var slide = currentSlide();
+  var stage = el("div","stage"); stage.setAttribute("data-act",slide.act);
+
+  if(slide.act===1){
+    var ticker = el("div","ticker");
+    var track = el("div","ticker-track");
+    var items = ["MONEY","TIME","ENERGY","CAREER","RELATIONSHIP","ME","성장성","안정성","수익성"];
+    var txt = items.map(function(i,idx){return "<span>"+(idx%2===0?"<b>▲</b> ":"<b style=\"color:var(--down)\">▼</b> ")+esc(i)+"</span>";}).join("");
+    track.innerHTML = txt+txt; ticker.appendChild(track); stage.appendChild(ticker);
+  }
+
+  var top = el("div","topbar");
+  var left = el("div",""); var badge=el("span","act-badge",esc("ACT "+slide.act+" · "+ACT_LABEL[slide.act])); badge.setAttribute("data-act",slide.act);
+  left.appendChild(badge);
+  var right = el("div","top-right");
+  right.appendChild(el("span","counter",String(local.slideIndex+1).padStart(2,"0")+" / "+SLIDES.length));
+  var connLabel = connState==="ok" ? "실시간 연결됨" : connState==="err" ? "연결 오류" : "연결 중…";
+  var conn = el("span","conn-badge"); conn.setAttribute("data-state",connState);
+  conn.innerHTML = "<span class=\"dot\"></span>"+esc(connLabel);
+  conn.title = connMsg;
+  right.appendChild(conn);
+  var joinBtn = el("button","join-btn","🔗 참여 QR");
+  joinBtn.addEventListener("click", function(){ qrOpen=true; render(); });
+  right.appendChild(joinBtn);
+  top.appendChild(left); top.appendChild(right);
+  stage.appendChild(top);
+
+  var body = el("div","stage-body single");
+  var main = el("div","stage-main");
+  if(slide.act===2){ var mh = el("div","memo-head"); mh.appendChild(el("span","m-l","HR BUSINESS DEVELOPMENT · INVESTMENT MEMO")); mh.appendChild(el("span","m-r","CONFIDENTIAL")); main.appendChild(mh); }
+  var contentWrap = main;
+  if(slide.act===3){ var band = el("div","cover-band"); contentWrap = band; }
+
+  contentWrap.appendChild(el("div","slide-eyebrow", slide.act===3?"2027 INVESTMENT PORTFOLIO":("SLIDE "+String(local.slideIndex+1).padStart(2,"0"))));
+  contentWrap.appendChild(el("h2","slide-title",esc(slide.title)));
+  if(slide.body && slide.body.length){
+    var bd = el("div","slide-body");
+    slide.body.forEach(function(l){ bd.appendChild(el("div","ln",esc(l))); });
+    contentWrap.appendChild(bd);
+  }
+  if(slide.act===3) main.appendChild(contentWrap);
+
+  if(slide.visual) renderVisual(main, slide.visual, blank);
+
+  var isInteractive = INTERACTIVE_KINDS.indexOf(slide.kind)>=0;
+  if(slide.kind==="compare"){
+    main.appendChild(compareVisual(slide));
+  } else if(isInteractive){
+    var pt = slide.kind==="scale" ? slide.scale.promptShort : slide.kind==="wordcloud" ? slide.wc.prompt : slide.kind==="dualwordcloud" ? (slide.wc.promptA+" / "+slide.wc.promptB) : slide.kind==="sentence" ? (slide.sentence.prefix+" ___ "+slide.sentence.suffix) : slide.kind==="choiceplus" ? slide.followup : "";
+    if(pt) main.appendChild(el("div","slide-caption","🗳️ 참여자 화면에 같은 질문이 떠 있습니다 — "+esc(pt)));
+  }
+
+  if(slide.caption) main.appendChild(el("div","slide-caption",esc(slide.caption)));
+
+  if(slide.note && slide.note.length){
+    var hn = el("div","host-note");
+    hn.innerHTML = "<b>진행자 멘트</b><br>" + slide.note.map(esc).join("<br>");
+    main.appendChild(hn);
+  }
+
+  body.appendChild(main);
+
+  if(isInteractive){
+    var side = el("div","stage-side");
+    side.appendChild(resultsPanel(slide));
+    body.appendChild(side);
+    body.className = "stage-body";
+  }
+  stage.appendChild(body);
+
+  var footer = el("div","stage-footer");
+  var prevBtn = el("button","nav-btn","← 이전"); prevBtn.disabled = local.slideIndex===0;
+  prevBtn.addEventListener("click", function(){ goTo(local.slideIndex-1); });
+  var rail = el("div","progress-rail"); var fill = el("div","progress-fill"); fill.style.width=((local.slideIndex+1)/SLIDES.length*100)+"%"; rail.appendChild(fill);
+  var nextBtn = el("button","nav-btn primary", local.slideIndex===SLIDES.length-1? "처음으로 ↺" : "다음 →");
+  nextBtn.addEventListener("click", function(){ goTo(local.slideIndex===SLIDES.length-1?0:local.slideIndex+1); });
+  var nav = el("div","nav-cluster"); nav.appendChild(prevBtn);
+  footer.appendChild(nav); footer.appendChild(rail); footer.appendChild(nextBtn);
+  stage.appendChild(footer);
+
+  app.appendChild(stage);
+  if(qrOpen) app.appendChild(qrOverlay());
+}
+
+render();
+
+/* ============================= FIREBASE WIRE-UP ============================= */
+if(!FBSync.isConfigured()){
+  connState = "err"; connMsg = "firebase-config.js 에 실제 설정값을 입력해주세요.";
+  render();
+} else {
+  FBSync.init(
+    function(uid){
+      connState = "ok"; connMsg = "uid: "+uid; render();
+      FBSync.watchAllAnswers(function(list){
+        allAnswers = list;
+        var af = document.activeElement;
+        if(af && (af.tagName==="INPUT" || af.tagName==="TEXTAREA")){ pendingRender = true; }
+        else { render(); }
+      });
+    },
+    function(errMsg){ connState = "err"; connMsg = errMsg; render(); }
+  );
+}
+
+})();
+</script>
+</body>
+</html>
