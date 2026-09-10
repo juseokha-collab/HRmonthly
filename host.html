@@ -183,6 +183,13 @@
   .ring-label{display:flex;flex-direction:column;gap:3px;}
   .ring-label .rl-k{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);letter-spacing:.06em;text-transform:uppercase;}
   .ring-label .rl-v{font-family:var(--font-m);font-size:22px;color:var(--ink);font-weight:700;}
+  .ring-label .rl-extra{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);margin-top:4px;}
+  .help-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--rule);background:var(--paper-raised);color:var(--ink-faint);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;}
+
+  .reveal-side{display:flex;flex-direction:column;align-items:flex-start;gap:14px;}
+  .reveal-toggle{border:1px solid var(--rule);background:var(--paper-raised);border-radius:14px;padding:14px 20px;font-family:var(--font-b);font-weight:700;font-size:15px;color:var(--ink);}
+  .reveal-body{display:flex;flex-direction:column;gap:6px;background:var(--paper-raised);border:1px solid var(--rule);border-radius:14px;padding:14px 18px;}
+  .reveal-line{font-size:15px;color:var(--ink-soft);font-family:var(--font-b);}
 
   @media (max-width:920px){
     .stage-body{grid-template-columns:1fr;}
@@ -222,6 +229,8 @@ var allAnswers = [];      // Firestore 응답 전체 캐시 (실시간)
 var connState = "wait";   // wait | ok | err
 var connMsg = "";
 var qrOpen = false;
+var numquizOpen = {};     // numquiz 결과 패널의 "최고/최저" 상세 토글 상태 (group key -> bool)
+var revealOpen = {};      // sideReveal 슬라이드의 우측 박스 열림 상태 (slide id -> bool)
 var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
 
 document.addEventListener("focusout", function(){
@@ -382,15 +391,24 @@ function resultsPanel(slide){
   } else if(slide.kind==="numquiz"){
     var qwrap = el("div","");
     slide.quiz.groups.forEach(function(g){
-      var valsT = docs.map(function(d){ return numOf(d[g.k+"_target"]); });
+      var valsT = docs.map(function(d){ return numOf(d[g.k+"_target"]); }).filter(function(n){return n!=null;});
       var valsR = docs.map(function(d){ return numOf(d[g.k+"_rate"]); });
       var avgT = avg(valsT), avgR = avg(valsR);
       var groupWrap = el("div","ring-pair"); groupWrap.style.marginBottom="18px";
       var ring = el("div","ring"); ring.style.setProperty("--rp", String(avgR!=null?Math.max(0,Math.min(100,avgR)):0));
       ring.appendChild(el("div","ring-v", avgR!=null? avgR.toFixed(0)+"%":"—"));
       var label = el("div","ring-label");
-      label.appendChild(el("div","rl-k",esc(g.label)));
+      var kRow = el("div",""); kRow.style.display="flex"; kRow.style.alignItems="center"; kRow.style.gap="6px";
+      kRow.appendChild(el("div","rl-k",esc(g.label)));
+      var helpBtn = el("button","help-btn","?");
+      helpBtn.addEventListener("click", function(){ numquizOpen[g.k] = !numquizOpen[g.k]; render(); });
+      kRow.appendChild(helpBtn);
+      label.appendChild(kRow);
       label.appendChild(el("div","rl-v", "평균 예상 "+(avgT!=null? avgT.toFixed(2):"—")+g.targetUnit+" · 달성율 "+(avgR!=null?avgR.toFixed(0):"—")+g.rateUnit));
+      if(numquizOpen[g.k]){
+        var detail = valsT.length ? ("최고 예상 "+Math.max.apply(null,valsT).toFixed(2)+g.targetUnit+" · 최저 예상 "+Math.min.apply(null,valsT).toFixed(2)+g.targetUnit) : "—";
+        label.appendChild(el("div","rl-extra", detail));
+      }
       groupWrap.appendChild(ring); groupWrap.appendChild(label);
       qwrap.appendChild(groupWrap);
     });
@@ -502,7 +520,7 @@ function render(){
     main.appendChild(compareVisual(slide));
   } else if(isInteractive){
     var pt = slide.kind==="scale" ? slide.scale.promptShort : slide.kind==="wordcloud" ? slide.wc.prompt : slide.kind==="dualwordcloud" ? (slide.wc.promptA+" / "+slide.wc.promptB) : slide.kind==="sentence" ? (slide.sentence.prefix+" ___ "+slide.sentence.suffix) : slide.kind==="choiceplus" ? slide.followup : slide.kind==="numquiz" ? "매출액/직접이익 목표와 달성율을 맞혀보세요" : "";
-    if(pt) main.appendChild(el("div","slide-caption","🗳️ 참여자 화면에 같은 질문이 떠 있습니다 — "+esc(pt)));
+    if(pt && !slide.hidePrompt) main.appendChild(el("div","slide-caption","🗳️ 참여자 화면에 같은 질문이 떠 있습니다 — "+esc(pt)));
   }
 
   if(slide.caption) main.appendChild(el("div","slide-caption",esc(slide.caption)));
@@ -513,6 +531,19 @@ function render(){
     var side = el("div","stage-side");
     side.appendChild(resultsPanel(slide));
     body.appendChild(side);
+    body.className = "stage-body";
+  } else if(slide.sideReveal){
+    var side2 = el("div","stage-side reveal-side");
+    var open = !!revealOpen[slide.id];
+    var toggleBtn = el("button","reveal-toggle", esc(slide.sideReveal.label)+(open?" ▲":" ▼"));
+    toggleBtn.addEventListener("click", function(){ revealOpen[slide.id] = !revealOpen[slide.id]; render(); });
+    side2.appendChild(toggleBtn);
+    if(open){
+      var revealBody = el("div","reveal-body");
+      slide.sideReveal.lines.forEach(function(l){ revealBody.appendChild(el("div","reveal-line",esc(l))); });
+      side2.appendChild(revealBody);
+    }
+    body.appendChild(side2);
     body.className = "stage-body";
   }
   stage.appendChild(body);
