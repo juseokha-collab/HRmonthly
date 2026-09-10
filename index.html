@@ -70,6 +70,8 @@
   .field input[type=text],.field input[type=number],.field textarea{width:100%;border:2.5px solid var(--line);border-radius:14px;padding:13px 15px;font-size:16px;background:var(--card);color:var(--ink);}
   .field input:focus,.field textarea:focus{outline:none;box-shadow:3px 3px 0 var(--bg-deep);}
   .field textarea{resize:vertical;min-height:70px;}
+  .quiz-row{display:flex;gap:10px;}
+  .quiz-row input{flex:1;min-width:0;}
   .range-row{display:flex;align-items:center;gap:12px;}
   .range-row input[type=range]{flex:1;accent-color:var(--ink);height:6px;}
   .range-val{font-family:var(--font-m);font-weight:700;font-size:20px;min-width:2.4em;text-align:right;font-variant-numeric:tabular-nums;}
@@ -226,6 +228,31 @@ function buildForm(slide, container){
       submitCurrent(payload);
     });
     container.appendChild(sb7);
+  } else if(slide.kind==="numquiz"){
+    var groupInputs = {};
+    slide.quiz.groups.forEach(function(g){
+      var gwrap = el("div","field");
+      gwrap.appendChild(el("label","",esc(g.label)));
+      var row = el("div","quiz-row");
+      var tIn = document.createElement("input"); tIn.type="number"; tIn.step="0.01"; tIn.placeholder=g.targetLabel+" ("+g.targetUnit+")";
+      tIn.value = (myAnswer && myAnswer[g.k+"_target"]!=null) ? myAnswer[g.k+"_target"] : "";
+      var rIn = document.createElement("input"); rIn.type="number"; rIn.step="1"; rIn.min=0; rIn.max=200; rIn.placeholder=g.rateLabel+" ("+g.rateUnit+")";
+      rIn.value = (myAnswer && myAnswer[g.k+"_rate"]!=null) ? myAnswer[g.k+"_rate"] : "";
+      row.appendChild(tIn); row.appendChild(rIn);
+      gwrap.appendChild(row);
+      groupInputs[g.k] = {t:tIn, r:rIn};
+      container.appendChild(gwrap);
+    });
+    var sbq = el("button","submit-btn","제출");
+    sbq.addEventListener("click", function(){
+      var payload = {};
+      slide.quiz.groups.forEach(function(g){
+        payload[g.k+"_target"] = parseFloat(groupInputs[g.k].t.value)||0;
+        payload[g.k+"_rate"] = parseFloat(groupInputs[g.k].r.value)||0;
+      });
+      submitCurrent(payload);
+    });
+    container.appendChild(sbq);
   } else if(slide.kind==="sentence"){
     var f6 = el("div","field"); f6.appendChild(el("label","",esc(slide.sentence.prefix)+" ___ "+esc(slide.sentence.suffix)));
     var inp6 = document.createElement("input"); inp6.type="text"; inp6.maxLength=40;
@@ -260,11 +287,13 @@ function render(){
   var isInteractive = INTERACTIVE_KINDS.indexOf(slide.kind)>=0;
 
   if(!isInteractive){
-    var wb = el("div","wait-box");
-    wb.appendChild(el("div","w-hero","구성원 여러분 반갑습니다"));
-    wb.appendChild(el("div","w-title","9월 Monthly 시작합니다"));
-    wb.appendChild(el("div","w-sub","질문이 시작되면 자동으로 화면이 변경됩니다"));
-    app.appendChild(wb);
+    if(slideIndex===0){
+      var wb = el("div","wait-box");
+      wb.appendChild(el("div","w-hero","구성원 여러분 반갑습니다"));
+      wb.appendChild(el("div","w-title","9월 Monthly 시작합니다"));
+      wb.appendChild(el("div","w-sub","질문이 시작되면 자동으로 화면이 변경됩니다"));
+      app.appendChild(wb);
+    }
     return;
   }
 

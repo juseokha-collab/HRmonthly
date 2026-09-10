@@ -81,14 +81,19 @@ var SLIDES = [
  caption:"이제부터 우리는 '팀원'이 아니라 '투자자'의 시선으로 우리 팀을 보겠습니다.",
  note:[]},
 
-{id:"s13",act:2,kind:"content",title:"HR사업개발팀 Investment Memo",
- body:["우리가 지금 가지고 있는 것 — [2026년 현재 실적]"],
- visual:{type:"stats",items:[
-   {k:"s13-rev",l:"매출",unit:""},{k:"s13-rate",l:"목표 대비 달성률",unit:"%"},{k:"s13-yoy",l:"전년 대비 성장률",unit:"%"},
-   {k:"s13-cust",l:"고객 수",unit:""},{k:"s13-new",l:"신규 고객",unit:""},{k:"s13-bm",l:"주요 BM",unit:"",text:true},
-   {k:"s13-newbiz",l:"신규사업",unit:"",text:true}]},
- caption:"투자하기 전에 먼저 숫자를 본다.",
- note:["여기서는 해석보다 팩트를 먼저 보겠습니다.","여러분이 외부 투자자라고 생각하고 이 숫자를 한번 봐주세요."]},
+{id:"s13",act:2,kind:"numquiz",title:"HR사업개발팀 Investment Memo",
+ body:["여러분은 우리 팀의 2026년 목표를 얼마나 기억하고 있을까요?","숫자를 직접 입력해보세요 — 정답은 다음 화면에서 공개됩니다."],
+ quiz:{groups:[
+   {k:"revenue",label:"2026 매출액 목표는? 목표 달성율은?",targetLabel:"매출액 목표",targetUnit:"억",rateLabel:"목표 달성율",rateUnit:"%"},
+   {k:"profit",label:"2026 직접이익 목표는? 목표 달성율은?",targetLabel:"직접이익 목표",targetUnit:"억",rateLabel:"목표 달성율",rateUnit:"%"}
+ ]},
+ caption:"투자하기 전에 먼저 숫자를 기억해본다.",
+ note:["여기서는 정답보다 우리 팀의 숫자에 얼마나 관심이 있었는지를 보는 시간입니다.","다음 화면에서 실제 목표를 공개합니다."]},
+
+{id:"s13r",act:2,kind:"content",title:"2026년 목표, 공개합니다",
+ body:["2026년 매출액 목표는 78.07억","2026년 직접이익 목표는 5.1억"],
+ caption:"우리가 지금 향하고 있는 숫자입니다.",
+ note:["방금 여러분이 예상한 숫자와 비교해보세요.","이 숫자를 기억하는 것이 오늘 이 시간의 작은 목표입니다."]},
 
 {id:"s14",act:2,kind:"scale",title:"① 성장성 : 우리 팀은 앞으로 얼마나 커질 수 있는가?",
  body:["현재의 크기보다 중요한 것은 앞으로 만들어낼 수 있는 크기입니다.","주요 지표: 매출 · 고객 · 사업 규모 · 신규 BM"],
@@ -167,7 +172,7 @@ var SLIDES = [
  note:["오늘 회사 이야기를 많이 했지만, 사실 오늘 이야기의 주인공은 회사가 아니었습니다.","우리가 어디에 시간을 쓰고, 어떤 일을 선택하고, 무엇을 중요하게 생각하고, 다른 사람의 평가를 어떻게 받아들이는지에 대한 이야기였습니다.","HR사업개발팀도 결국 사람들의 시간과 역량이 투자되는 하나의 자산입니다.","2027년에는 우리 팀의 가치도, 여러분 한 사람 한 사람의 가치도 지금보다 더 높아졌으면 좋겠습니다."]}
 ];
 
-var INTERACTIVE_KINDS = ["choice","scale","dualscale","wordcloud","dualwordcloud","allocation","choiceplus","openthree","sentence"];
+var INTERACTIVE_KINDS = ["choice","scale","dualscale","wordcloud","dualwordcloud","allocation","choiceplus","openthree","sentence","numquiz"];
 
 function slideById(id){
   for(var i=0;i<SLIDES.length;i++) if(SLIDES[i].id===id) return SLIDES[i];
