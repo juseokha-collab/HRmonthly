@@ -46,6 +46,12 @@ var SLIDES = [
 {id:"s06",act:1,kind:"dualscale",title:"나를 한 번 평가해 볼까요?",
  body:["현재 나의 회사 내 시장가치는 100점 만점에 몇 점일까요?","그리고 한 번 더","— 내가 생각하기에 다른 사람들이 평가하는 나의 점수는 몇 점일까요?"],
  fields:[{k:"self",l:"① 내가 평가하는 나"},{k:"perceived",l:"② 내가 예상하는 타인의 평가"}],
+ visual:{type:"johari",axisY:"자기 노출",axisX:"피드백 수용",quadrants:[
+   {label:"공개 영역",desc:"나도 알고\n남도 알고"},
+   {label:"눈먼 영역",desc:"나는 모르고\n남은 알고"},
+   {label:"비밀 영역",desc:"나는 알고\n남은 모르고"},
+   {label:"미지 영역",desc:"나도 모르고\n남도 모르고"}
+ ]},
  caption:"Self Value vs. Perceived Value",
  note:["두 점수가 같습니까?","차이가 있다면 왜 차이가 날까요?"]},
 
@@ -346,6 +352,21 @@ function renderVisual(container, v, blankFn, extra){
       thc.appendChild(box);
     });
     container.appendChild(thc);
+  } else if(v.type==="johari"){
+    var jwrap = el("div","johari-wrap");
+    jwrap.appendChild(el("div","johari-axis-y",esc(v.axisY||"")));
+    var jcol = el("div","johari-col");
+    var jgrid = el("div","johari-grid");
+    v.quadrants.forEach(function(q){
+      var cell = el("div","johari-cell");
+      cell.appendChild(el("div","jc-label",esc(q.label)));
+      cell.appendChild(el("div","jc-desc",esc(q.desc)));
+      jgrid.appendChild(cell);
+    });
+    jcol.appendChild(jgrid);
+    jcol.appendChild(el("div","johari-axis-x",esc(v.axisX||"")));
+    jwrap.appendChild(jcol);
+    container.appendChild(jwrap);
   } else if(v.type==="cards"){
     var cr = el("div","card-row");
     v.items.forEach(function(it){
