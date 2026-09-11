@@ -121,8 +121,8 @@
   .triangle .vx.bl{bottom:0;left:0;} .triangle .vx.br{bottom:0;right:0;}
   .triangle .orbit{position:absolute;font-size:12px;color:var(--ink-faint);font-family:var(--font-m);}
   .flow-chain{display:flex;flex-direction:column;gap:0;}
-  .flow-node{border:1px solid var(--rule);background:var(--paper-raised);border-radius:10px;padding:11px 15px;font-size:14.5px;max-width:44ch;}
-  .flow-arrow{font-family:var(--font-m);color:var(--ink-faint);padding:4px 0 4px 18px;font-size:13px;}
+  .flow-node{border:1px solid var(--rule);background:var(--paper-raised);border-radius:10px;padding:11px 15px;font-size:14.5px;max-width:44ch;text-align:center;}
+  .flow-arrow{font-family:var(--font-m);color:var(--ink-faint);padding:4px 0;font-size:13px;text-align:center;max-width:44ch;}
   .data-table{border-collapse:collapse;width:100%;font-size:14px;background:var(--paper-raised);border-radius:14px;overflow:hidden;}
   .data-table th,.data-table td{border-bottom:1px solid var(--rule);padding:9px 10px;text-align:left;vertical-align:top;}
   .data-table th{font-family:var(--font-m);font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
@@ -157,6 +157,8 @@
   .gbar-fill.base{background:var(--accent);z-index:2;}
   .gbar-fill.overlay{background:rgba(255,255,255,.35);z-index:1;}
   .gbar-q{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-b);font-weight:700;font-size:56px;color:var(--ink-faint);transform:scaleY(2.4);}
+  .gbar-clickable{cursor:pointer;}
+  .gbar-reveal-label{position:absolute;top:8px;left:0;right:0;text-align:center;font-family:var(--font-m);font-weight:700;font-size:13px;color:var(--ink);z-index:3;}
   .gbars-labels-row{display:flex;margin-top:8px;}
   .gbar-axis-spacer{width:30px;flex:none;}
   .gbar-labels-inner{flex:1;display:flex;gap:16px;}
@@ -198,11 +200,12 @@
   .ring-label .rl-extra{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);margin-top:4px;}
   .help-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--rule);background:var(--paper-raised);color:var(--ink-faint);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;}
 
-  .reveal-side{display:flex;flex-direction:column;align-items:flex-start;gap:20px;}
   .reveal-toggle{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:5px 12px;font-family:var(--font-m);font-weight:600;font-size:12px;color:var(--ink);}
-  .reveal-body{display:flex;flex-direction:column;}
-  .reveal-line{font-family:var(--font-b);font-size:16px;line-height:1.85;color:var(--ink-soft);margin-bottom:2px;}
-  .reveal-line.hero{font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;color:var(--ink);margin-bottom:0;}
+  .reveal-line{font-family:var(--font-b);font-size:16px;line-height:1.85;color:var(--ink-soft);}
+  .reveal-line.hero{font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;color:var(--ink);}
+  .stage-main.reveal-pair .ra-row{display:flex;align-items:flex-start;}
+  .stage-main.reveal-pair .ra-left{flex:1.05;padding-right:24px;min-width:0;}
+  .stage-main.reveal-pair .ra-right{flex:1;padding-left:40px;min-width:0;min-height:1em;}
 
   @media (max-width:920px){
     .stage-body{grid-template-columns:1fr;}
@@ -244,6 +247,7 @@ var connMsg = "";
 var qrOpen = false;
 var numquizOpen = {};     // numquiz 결과 패널의 "최고/최저" 상세 토글 상태 (group key -> bool)
 var revealOpen = {};      // sideReveal 슬라이드의 우측 박스 열림 상태 (slide id -> bool)
+var gbarRevealOpen = {};  // growthbars 슬라이드의 "?" 클릭 시 라벨 노출 상태 (slide id -> bool)
 var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
 
 document.addEventListener("focusout", function(){
@@ -510,31 +514,76 @@ function render(){
 
   var body = el("div","stage-body single");
   var main = el("div","stage-main");
-  if(slide.act===2){ var mh = el("div","memo-head"); mh.appendChild(el("span","m-l","HR BUSINESS DEVELOPMENT · INVESTMENT MEMO")); mh.appendChild(el("span","m-r","CONFIDENTIAL")); main.appendChild(mh); }
-  var contentWrap = main;
-  if(slide.act===3){ var band = el("div","cover-band"); contentWrap = band; }
-  if(slide.cover){ main.classList.add("hero-cover"); }
-
-  contentWrap.appendChild(el("div","slide-eyebrow", slide.cover?"HR사업개발팀 · MONTHLY":slide.act===3?"2027 INVESTMENT PORTFOLIO":("SLIDE "+String(local.slideIndex+1).padStart(2,"0"))));
-  contentWrap.appendChild(el("h2","slide-title",esc(slide.title).replace(/\n/g,"<br>")));
-  if(slide.body && slide.body.length){
-    var bd = el("div","slide-body");
-    slide.body.forEach(function(l){ bd.appendChild(el("div","ln",esc(l))); });
-    contentWrap.appendChild(bd);
-  }
-  if(slide.act===3) main.appendChild(contentWrap);
-
-  if(slide.visual) renderVisual(main, slide.visual, blank);
-
   var isInteractive = INTERACTIVE_KINDS.indexOf(slide.kind)>=0;
-  if(slide.kind==="compare"){
-    main.appendChild(compareVisual(slide));
-  } else if(isInteractive){
-    var pt = slide.kind==="scale" ? slide.scale.promptShort : slide.kind==="wordcloud" ? slide.wc.prompt : slide.kind==="dualwordcloud" ? (slide.wc.promptA+" / "+slide.wc.promptB) : slide.kind==="sentence" ? (slide.sentence.prefix+" ___ "+slide.sentence.suffix) : slide.kind==="choiceplus" ? slide.followup : slide.kind==="numquiz" ? "매출액/직접이익 목표와 달성율을 맞혀보세요" : "";
-    if(pt && !slide.hidePrompt) main.appendChild(el("div","slide-caption","🗳️ 참여자 화면에 같은 질문이 떠 있습니다 — "+esc(pt)));
-  }
 
-  if(slide.caption) main.appendChild(el("div","slide-caption",esc(slide.caption)));
+  if(slide.act===2){ var mh = el("div","memo-head"); mh.appendChild(el("span","m-l","HR BUSINESS DEVELOPMENT · INVESTMENT MEMO")); mh.appendChild(el("span","m-r","CONFIDENTIAL")); main.appendChild(mh); }
+
+  if(slide.sideReveal){
+    var open = !!revealOpen[slide.id];
+    var rlines = slide.sideReveal.lines || [];
+    var blines = slide.body || [];
+    main.classList.add("reveal-pair");
+
+    var row0 = el("div","ra-row");
+    row0.appendChild(el("div","ra-left slide-eyebrow","SLIDE "+String(local.slideIndex+1).padStart(2,"0")));
+    var right0 = el("div","ra-right");
+    var toggleBtn = el("button","reveal-toggle", esc(slide.sideReveal.label)+(open?" ▲":" ▼"));
+    toggleBtn.addEventListener("click", function(){ revealOpen[slide.id] = !revealOpen[slide.id]; render(); });
+    right0.appendChild(toggleBtn);
+    row0.appendChild(right0);
+    main.appendChild(row0);
+
+    var row1 = el("div","ra-row");
+    row1.appendChild(el("h2","ra-left slide-title", esc(slide.title).replace(/\n/g,"<br>")));
+    var right1 = el("div","ra-right");
+    if(open && rlines[0]!=null) right1.appendChild(el("div","reveal-line hero", esc(rlines[0])));
+    row1.appendChild(right1);
+    main.appendChild(row1);
+
+    var maxRows = Math.max(blines.length, rlines.length-1);
+    for(var ri=0; ri<maxRows; ri++){
+      var row = el("div","ra-row");
+      row.appendChild(el("div","ra-left slide-body", blines[ri]!=null?esc(blines[ri]):""));
+      var rc = el("div","ra-right");
+      if(open && rlines[ri+1]!=null) rc.appendChild(el("div","reveal-line", esc(rlines[ri+1])));
+      row.appendChild(rc);
+      main.appendChild(row);
+    }
+
+    if(slide.caption){
+      var rowC = el("div","ra-row");
+      rowC.appendChild(el("div","ra-left slide-caption", esc(slide.caption)));
+      rowC.appendChild(el("div","ra-right"));
+      main.appendChild(rowC);
+    }
+  } else {
+    var contentWrap = main;
+    if(slide.act===3){ var band = el("div","cover-band"); contentWrap = band; }
+    if(slide.cover){ main.classList.add("hero-cover"); }
+
+    contentWrap.appendChild(el("div","slide-eyebrow", slide.cover?"HR사업개발팀 · MONTHLY":slide.act===3?"2027 INVESTMENT PORTFOLIO":("SLIDE "+String(local.slideIndex+1).padStart(2,"0"))));
+    contentWrap.appendChild(el("h2","slide-title",esc(slide.title).replace(/\n/g,"<br>")));
+    if(slide.body && slide.body.length){
+      var bd = el("div","slide-body");
+      slide.body.forEach(function(l){ bd.appendChild(el("div","ln",esc(l))); });
+      contentWrap.appendChild(bd);
+    }
+    if(slide.act===3) main.appendChild(contentWrap);
+
+    if(slide.visual) renderVisual(main, slide.visual, blank, {
+      revealOpen: !!gbarRevealOpen[slide.id],
+      onToggleReveal: function(){ gbarRevealOpen[slide.id] = !gbarRevealOpen[slide.id]; render(); }
+    });
+
+    if(slide.kind==="compare"){
+      main.appendChild(compareVisual(slide));
+    } else if(isInteractive){
+      var pt = slide.kind==="scale" ? slide.scale.promptShort : slide.kind==="wordcloud" ? slide.wc.prompt : slide.kind==="dualwordcloud" ? (slide.wc.promptA+" / "+slide.wc.promptB) : slide.kind==="sentence" ? (slide.sentence.prefix+" ___ "+slide.sentence.suffix) : slide.kind==="choiceplus" ? slide.followup : slide.kind==="numquiz" ? "매출액/직접이익 목표와 달성율을 맞혀보세요" : "";
+      if(pt && !slide.hidePrompt) main.appendChild(el("div","slide-caption","🗳️ 참여자 화면에 같은 질문이 떠 있습니다 — "+esc(pt)));
+    }
+
+    if(slide.caption) main.appendChild(el("div","slide-caption",esc(slide.caption)));
+  }
 
   body.appendChild(main);
 
@@ -542,19 +591,6 @@ function render(){
     var side = el("div","stage-side");
     side.appendChild(resultsPanel(slide));
     body.appendChild(side);
-    body.className = "stage-body";
-  } else if(slide.sideReveal){
-    var side2 = el("div","stage-side reveal-side");
-    var open = !!revealOpen[slide.id];
-    var toggleBtn = el("button","reveal-toggle", esc(slide.sideReveal.label)+(open?" ▲":" ▼"));
-    toggleBtn.addEventListener("click", function(){ revealOpen[slide.id] = !revealOpen[slide.id]; render(); });
-    side2.appendChild(toggleBtn);
-    if(open){
-      var revealBody = el("div","reveal-body");
-      slide.sideReveal.lines.forEach(function(l,li){ revealBody.appendChild(el("div","reveal-line"+(li===0?" hero":""),esc(l))); });
-      side2.appendChild(revealBody);
-    }
-    body.appendChild(side2);
     body.className = "stage-body";
   }
   stage.appendChild(body);

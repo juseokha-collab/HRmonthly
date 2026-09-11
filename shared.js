@@ -13,13 +13,13 @@ var SLIDES = [
  visual:{type:"pills",items:["반갑습니다","오랜만입니다","자유롭게","솔직하게","함께"]}},
 
 {id:"s01",act:1,kind:"content",title:"투자! 무엇을? 얼마나?",
- body:["우리는 매일 투자합니다. 무언가에...","돈, 시간, 에너지, 관계, 커리어 등 나와 관련된...","그런데... 내가 중요하다고 생각하는 것과","다른 사람이 중요하다고 생각하는 것이 항상 같지는 않다는 것입니다."],
+ body:["우리는 매일 투자합니다. 무언가에...","","돈, 시간, 에너지, 관계, 커리어 등 나와 관련된...","그런데... 내가 중요하다고 생각하는 것과","다른 사람이 중요하다고 생각하는 것이 항상 같지는 않다는 것입니다."],
  visual:{type:"pills",items:["MONEY","TIME","ENERGY","CAREER","RELATIONSHIP","ME"]},
  caption:"돈보다 더 중요한 투자는 무엇일까요?",
  note:["오늘은 회사 이야기를 조금 늦게 하겠습니다.","먼저 우리 자신을 하나의 투자자라고 생각해보겠습니다.","그리고 마지막에 이 질문을 우리 팀과 회사에 그대로 적용해보겠습니다."]},
 
 {id:"s02",act:1,kind:"choice",title:"1억이 생긴다면,\n어디에 투자하시겠습니까?",
- body:["조건은 하나입니다.","1억을 반드시 투자해야 합니다. 당신의 선택은?"],
+ body:["조건은 하나입니다.","1억을 반드시 투자해야 합니다.","","당신의 선택은?"],
  options:[{k:"kr_top",l:"국내주식(삼전닉스)"},{k:"kr_etc",l:"국내주식(기타)"},{k:"overseas",l:"해외주식"},{k:"deposit",l:"예금 / 채권"},{k:"self",l:"나 자신"},{k:"family",l:"가족 / 지인"},{k:"etc",l:"기타",note:true,noteLabel:"기타를 선택하셨다면, 어떤 항목인가요?"}],
  caption:"같은 1억원, 다른 선택! Why?",
  note:["어떤 선택이 맞는지가 중요한 게 아닙니다.","왜 그걸 선택했는지가 중요합니다.","여기서부터 사람마다 판단 기준이 다르다는 걸 볼 수 있습니다."]},
@@ -32,7 +32,7 @@ var SLIDES = [
  note:["여러분은 성장성, 안정성, 수익성 중 무엇을 가장 중요하게 보시나요?","그리고 이 기준이 회사에서 일할 때도 똑같이 작동하고 있을까요?"]},
 
 {id:"s04",act:1,kind:"choice",title:"같은 정보에도 달라지는 판단",
- body:["회사 A: 매출 성장률 +30%, 시장 규모의 확장성, 높은 변동성, 현재 적자.","여러분이라면 이 회사에 투자하시겠습니까?","하이닉스는 작년 이맘 때 35만원","하이닉스는 3개월전 298만원"],
+ body:["회사 A: 매출 성장률 +30%, 시장 규모의 확장성, 높은 변동성, 현재 적자.","여러분이라면 이 회사에 투자하시겠습니까?","","하이닉스는 작년 이맘 때 35만원","하이닉스는 3개월전 298만원"],
  options:[{k:"strong",l:"적극 투자",em:"🟢"},{k:"partial",l:"일부 투자",em:"🟡"},{k:"watch",l:"관망",em:"⚪"},{k:"no",l:"투자하지 않음",em:"🔴"}],
  caption:"개인의 경험과 관점/가치관에 따라 달라지는 기준",
  note:["투자자 A에게는 '성장성'이 보이고, 투자자 B에게는 '위험성'이 보입니다.","둘 중 누가 틀렸다고 말하기 어렵습니다."]},
@@ -43,14 +43,14 @@ var SLIDES = [
  caption:"좋은 자산과 좋은 평가를 받는 자산은 항상 같은 것이 아니다.",
  note:["이게 오늘 이야기하고 싶은 핵심입니다.","내가 생각하는 가치와 남들이 평가하는 가치가 다를 수 있습니다.","그런데 이건 투자뿐만 아니라 사람에게도 그대로 적용됩니다."]},
 
-{id:"s06",act:1,kind:"dualscale",title:"나는 한 번 평가해 볼까요?",
- body:["현재 나의 회사 내 시장가치는 100점 만점에 몇 점일까요?","그리고 한 번 더 — 내가 생각하기에 다른 사람들이 평가하는 나의 점수는 몇 점일까요?"],
+{id:"s06",act:1,kind:"dualscale",title:"나를 한 번 평가해 볼까요?",
+ body:["현재 나의 회사 내 시장가치는 100점 만점에 몇 점일까요?","그리고 한 번 더","— 내가 생각하기에 다른 사람들이 평가하는 나의 점수는 몇 점일까요?"],
  fields:[{k:"self",l:"① 내가 평가하는 나"},{k:"perceived",l:"② 내가 예상하는 타인의 평가"}],
  caption:"Self Value vs. Perceived Value",
  note:["두 점수가 같습니까?","차이가 있다면 왜 차이가 날까요?"]},
 
 {id:"s07",act:1,kind:"content",title:"내가 보는 나, 남이 보는 나",
- body:["우리는 나 자신을 평가할 때 다른 사람이 알 수 없는 정보까지 알고 있습니다","— 노력, 고민, 실패, 의도, 과정.","반면 다른 사람은 주로 결과, 행동, 영향, 함께 일한 경험을 봅니다."],
+ body:["우리는 나 자신을 평가할 때 다른 사람이 알 수 없는 정보까지 알고 있습니다","— 노력, 고민, 실패, 의도, 과정.","","반면 다른 사람은 주로 결과, 행동, 영향, 함께 일한 경험을 봅니다."],
  visual:{type:"matrix2",colHead:["남이 높게 평가","남이 낮게 평가"],rowHead:["내가 높게 평가","내가 낮게 평가"],cells:[["명확한 강점","평가 Gap"],["Hidden Value","개선 영역"]]},
  caption:"평가의 차이는 '서로 다른 정보'에서 시작",
  note:["내가 잘한다고 생각하지만 남들이 잘 모르는 능력이 있을 수 있습니다.","반대로 내가 별것 아니라고 생각하지만 남들이 높게 평가하는 것도 있습니다."]},
@@ -61,19 +61,19 @@ var SLIDES = [
  caption:"가치는 만들어지는 것과 동시에 평가되는 것.",
  note:["여기서부터 개인의 이야기가 조직의 이야기로 연결됩니다."]},
 
-{id:"s09",act:1,kind:"content",title:"우리는 서로 다른 정보를 가지고 나를 평가한다",
+{id:"s09",act:1,kind:"content",title:"우리는 서로 다른 정보를 가지고 평가한다",
  body:[],
  visual:{type:"table",head:["평가자","주로 보는 것"],rows:[["나","노력 · 과정 · 고민"],["동료","협업 · 관계 · 실행"],["리더","결과 · 영향 · 성장"],["고객","문제 해결 · 체감 가치"],["시장","성과 · 경쟁력 · 가격"]]},
  caption:"평가의 차이는 '누가 맞느냐'보다 '무엇을 보고 있느냐'의 차이에서 발생.",
  note:["내가 억울했던 평가가 있다면, 상대방은 나에게 없는 정보를 가지고 있었을 수도 있습니다."]},
 
-{id:"s10",act:1,kind:"content",title:"실제 가치보다 '기대'가 먼저 반영되는 경우가 많다",
+{id:"s10",act:1,kind:"content",title:"실제 가치보다 더 많이 반영되는 '기대'",
  body:["시장에서는 실제 가치뿐 아니라","'다른 사람들이 앞으로 어떻게 평가할 것인가'가 현재 판단에 영향."],
  visual:{type:"formula",terms:["실제 가치","미래에 대한 기대","대중의 관심"],result:"현재의 시장 평가"},
  caption:"시장은 현재의 가치보다 미래에 대한 기대를 먼저 가격에 반영하기도 한다.",
  note:["조직에서도 비슷합니다.","AI를 잘하는 사람, 영업을 잘하는 사람, 데이터를 잘하는 사람…","그런데 우리가 정말 중요하게 생각하는 것과 '요즘 중요하다고 하는 것'은 항상 같을까요?"]},
 
-{id:"s11",act:1,kind:"scale",hidePrompt:true,title:"'나'를 '주가'처럼 평가를 한다면?",
+{id:"s11",act:1,kind:"scale",hidePrompt:true,title:"'나'를 '주가'처럼 평가 한다면?",
  body:["현재 나의 주가 = 100","그렇다면, 1년 후 나의 주가는?"],
  scale:{unit:"",promptShort:"1년 후 목표 주가 (현재=100 기준)",min:0,max:300},
  caption:"시장이 평가하는 나의 미래가치를 어떻게 높일 것인가?",
@@ -102,8 +102,8 @@ var SLIDES = [
 {id:"s14",act:2,kind:"scale",hidePrompt:true,title:"① 우리 팀의 성장 가능성?",
  body:["현재의 크기보다 중요한 것은 앞으로 만들어낼 수 있는 크기입니다.","주요 지표: 매출 · 고객 · 사업 규모 · 신규 BM"],
  visual:{type:"growthbars",scaleMax:80,series:[
-   {year:"2024",dual:true,base:48,total:76.5},
-   {year:"2025",dual:true,base:61,total:65},
+   {year:"2024",dual:true,base:48,total:76.5,revealLabel:"28.3억"},
+   {year:"2025",dual:true,base:61,total:65,revealLabel:"4.1억"},
    {year:"2026(계획)",dual:false,total:78},
    {year:"2027",question:true}
  ]},
@@ -111,8 +111,8 @@ var SLIDES = [
  caption:"과거 실적은 증명, 성장성은 미래에 대한 질문.",
  note:[]},
 
-{id:"s15",act:2,kind:"wordcloud",hidePrompt:true,title:"② 지금 이대로 하면 되는가?",
- body:["고객은 안정적인가? 매출은 반복되는가?","특정 사업에 지나치게 의존하고 있지는 않은가? 사람이 바뀌어도 사업이 지속되는가?"],
+{id:"s15",act:2,kind:"wordcloud",hidePrompt:true,title:"② 안정성 : 이대로 괜찮은거야?",
+ body:["우리가 아니면 안되는건가? 반복 가능성 검증","왜 우리인가? Core Competency","특정 사업에 지나치게 의존하고 있지는 않은가?","사람이 바뀌어도 사업이 지속되는가?"],
  wc:{prompt:"우리 팀의 가장 큰 리스크는 무엇이라고 생각합니까?"},
  caption:"바람직한 BM 구조는 안정과 성장을 동시에...",
  note:[]},
@@ -129,36 +129,30 @@ var SLIDES = [
  caption:"고객이 지갑을 여는 순간, 우리의 가치가 시장가치로 전환된다.",
  note:["가능하다면 실제 고객의 말을 1~2개 넣습니다.","우리가 자랑하는 것보다 고객이 좋아하는 것을 봐야 합니다."]},
 
-{id:"s18",act:2,kind:"dualwordcloud",hidePrompt:true,title:"우리가 과대평가하고 있는 것은 무엇인가?",
- body:["'우리 팀이 중요하다고 생각하지만 실제 시장에서는 생각보다 중요하지 않은 것은?'","그리고 두 번째 질문 — '반대로 우리가 과소평가하고 있는 것은?'"],
+{id:"s18",act:2,kind:"dualwordcloud",hidePrompt:true,title:"경쟁력을 보유한 핵심역량이라는 착각?",
+ body:["'우리는 중요하다고 생각하지만 실제 시장에서의 반응도 그러한가?'","","그리고 두 번째 질문 — '반대로 우리가 과소평가하고 있는 것은?'"],
  wc:{promptA:"과대평가",promptB:"과소평가"},
  caption:"성장은 새로운 것을 더하는 것뿐 아니라, 잘못된 믿음을 버리는 것에서도 시작된다.",
  note:["여기서는 방어적으로 반응하지 않는 게 중요합니다.","이 질문에는 정답이 없습니다. 오늘은 여러분의 생각을 그대로 보고 싶습니다."]},
 
-{id:"s19",act:2,kind:"choiceplus",hidePrompt:true,title:"그래서, 여러분이라면\n우리 팀에 투자하시겠습니까?",
- body:["지금까지 본 것을 종합하면, HR사업개발팀은 현재 좋은 투자처인가?"],
+{id:"s19",act:2,kind:"choiceplus",hidePrompt:true,title:"HR개발팀 구성원 여러분\n우리 팀에 투자하시겠습니까?",
+ body:["","정말 투자하시겠습니까?"],
  options:[{k:"strong",l:"적극 투자",em:"🟢"},{k:"watch-in",l:"투자하지만 지켜본다",em:"🟡"},{k:"proof",l:"조금 더 증명이 필요하다",em:"⚪"},{k:"no",l:"지금은 투자하지 않는다",em:"🔴"}],
  followup:"투자하지 않는다면, 딱 하나 무엇이 바뀌어야 합니까?",
  caption:"비판을 견디는 팀이 아니라, 비판을 성장의 정보로 바꾸는 팀.",
  note:[]},
 
-{id:"s20",act:3,kind:"content",title:"2027년, 우리는 어디에 투자하려고 하는가?",
+{id:"s20",act:3,kind:"content",title:"2026년의 성과 기반, 2027년 우리가 가려고 하는 방향과 속도는?",
  body:["2026년의 성과를 기반으로 2027년에는 선택과 집중이 필요."],
  visual:{type:"three",cols:[{h:"① 지켜야 할 것",items:["현재 BM","핵심 고객","안정적 매출"]},{h:"② 키워야 할 것",items:["성장 BM","신규 고객","확장 가능 사업"]},{h:"③ 새롭게 투자할 것",items:["신규 BM","AI","새로운 시장","새로운 역량"]}]},
- caption:"'더 많이 하는 것'이 아니라 '어디에 더 투자할 것인가'를 결정.",
+ caption:"'더 많이 하는 것'이 아니라 '어디에 더 투자할 것인가' 방향 결정.",
  note:[]},
 
 {id:"s21",act:3,kind:"allocation",title:"100의 투자금이 있다면,\n어디에 배분하시겠습니까?",
- body:["100을 반드시 전부 배분해야 합니다."],
+ body:["100을 남김없이 전부 배분해야 합니다."],
  alloc:{cats:[{k:"existing",l:"기존 BM"},{k:"new",l:"신규 BM"},{k:"ai",l:"AI / 신기술"},{k:"cust",l:"고객 확대"},{k:"content",l:"콘텐츠 / 서비스"},{k:"people",l:"사람 / 조직"}]},
  caption:"우리가 원하는 미래는 결국 우리가 어디에 자원을 배분하느냐에 의해 결정된다.",
  note:["이제 여러분이 경영진입니다.","돈도 사람도 시간도 무한하지 않다고 생각하고 배분해주세요."]},
-
-{id:"s22",act:3,kind:"compare",title:"우리가 생각한 포트폴리오와 경영진의 포트폴리오는 얼마나 다른가?",
- body:[],
- compare:{rows:[{k:"existing",l:"기존 BM"},{k:"new",l:"신규 BM"},{k:"ai",l:"AI / 신기술"},{k:"cust",l:"고객 확대"},{k:"people",l:"사람 / 조직"}],from:"s21"},
- caption:"차이는 갈등이 아니라, 서로 다른 정보를 가지고 있다는 증거일 수 있다.",
- note:["누가 맞는지를 정하려는 것이 아닙니다.","왜 우리는 다르게 판단하는지를 보는 겁니다.","그 차이 속에 전략의 힌트가 있을 수 있습니다."]},
 
 {id:"s23",act:3,kind:"content",title:"2027년, 우리가 만들어야 할 가치는 무엇인가?",
  body:["2027년의 목표는 단순히 '더 많이 팔기'가 아닙니다."],
@@ -193,8 +187,9 @@ function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 
 /* ============================= VISUALS (content diagrams — host page only, static/editable blanks) ============================= */
-function renderVisual(container, v, blankFn){
+function renderVisual(container, v, blankFn, extra){
   if(!v) return;
+  extra = extra || {};
   if(v.type==="pills"){
     var pr = el("div","pill-row");
     v.items.forEach(function(t){ pr.appendChild(el("span","pill",esc(t))); });
@@ -288,6 +283,10 @@ function renderVisual(container, v, blankFn){
       var track = el("div","gbar-track");
       if(s.question){
         track.appendChild(el("div","gbar-q","?"));
+        if(extra.onToggleReveal){
+          track.classList.add("gbar-clickable");
+          track.addEventListener("click", extra.onToggleReveal);
+        }
       } else {
         var baseVal = s.dual ? s.base : s.total;
         var totalVal = s.total;
@@ -299,6 +298,11 @@ function renderVisual(container, v, blankFn){
           var overlayFill = el("div","gbar-fill overlay");
           overlayFill.style.bottom = basePct+"%"; overlayFill.style.height = Math.max(0,totalPct-basePct)+"%";
           track.appendChild(overlayFill);
+        }
+        if(s.revealLabel){
+          var lbl = el("div","gbar-reveal-label", esc(s.revealLabel));
+          if(!extra.revealOpen) lbl.style.display = "none";
+          track.appendChild(lbl);
         }
       }
       barsRow.appendChild(track);
