@@ -262,13 +262,32 @@ function renderVisual(container, v, blankFn){
     container.appendChild(sg);
   } else if(v.type==="growthbars"){
     var scaleMax = v.scaleMax || 100;
-    var gb = el("div","growth-bars");
+    var step = v.step || 10;
+    var ticks = []; for(var tv=0; tv<=scaleMax; tv+=step) ticks.push(tv);
+
+    var outer = el("div","gbars-outer");
+    var chartRow = el("div","gbars-chart-row");
+
+    var axis = el("div","gbar-axis");
+    ticks.forEach(function(tv){
+      var tick = el("div","gbar-tick",String(tv)); tick.style.bottom = (tv/scaleMax*100)+"%";
+      axis.appendChild(tick);
+    });
+    chartRow.appendChild(axis);
+
+    var plot = el("div","gbar-plot");
+    var grid = el("div","gbar-grid");
+    ticks.forEach(function(tv){
+      var line = el("div","gbar-gridline"); line.style.bottom = (tv/scaleMax*100)+"%";
+      grid.appendChild(line);
+    });
+    plot.appendChild(grid);
+
+    var barsRow = el("div","gbar-bars-row");
     v.series.forEach(function(s){
-      var col = el("div","gbar-col");
       var track = el("div","gbar-track");
       if(s.question){
         track.appendChild(el("div","gbar-q","?"));
-        col.appendChild(track);
       } else {
         var baseVal = s.dual ? s.base : s.total;
         var totalVal = s.total;
@@ -281,12 +300,21 @@ function renderVisual(container, v, blankFn){
           overlayFill.style.bottom = basePct+"%"; overlayFill.style.height = Math.max(0,totalPct-basePct)+"%";
           track.appendChild(overlayFill);
         }
-        col.appendChild(track);
       }
-      col.appendChild(el("div","gbar-year",esc(s.year)));
-      gb.appendChild(col);
+      barsRow.appendChild(track);
     });
-    container.appendChild(gb);
+    plot.appendChild(barsRow);
+    chartRow.appendChild(plot);
+    outer.appendChild(chartRow);
+
+    var labelsRow = el("div","gbars-labels-row");
+    labelsRow.appendChild(el("div","gbar-axis-spacer"));
+    var labelsInner = el("div","gbar-labels-inner");
+    v.series.forEach(function(s){ labelsInner.appendChild(el("div","gbar-year",esc(s.year))); });
+    labelsRow.appendChild(labelsInner);
+    outer.appendChild(labelsRow);
+
+    container.appendChild(outer);
   } else if(v.type==="bizTable"){
     var bt = el("table","data-table");
     var hr2 = el("tr"); hr2.appendChild(el("th","","사업")); v.cols.forEach(function(c){ hr2.appendChild(el("th","",esc(c))); }); bt.appendChild(hr2);
