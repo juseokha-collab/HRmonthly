@@ -106,8 +106,9 @@
   .johari-cell .jc-desc{font-family:var(--font-m);font-size:10px;color:var(--ink-faint);line-height:1.4;white-space:pre-line;}
   .johari-axis-x{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);text-align:center;}
 
-  .rp-wrap{display:flex;flex-direction:column;gap:9px;flex:1;justify-content:space-between;}
-  .rp-header{display:flex;flex-direction:column;gap:4px;}
+  .rp-wrap{display:flex;flex-direction:column;flex:1;}
+  .rp-header{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+  .rp-lower{display:flex;flex-direction:column;gap:9px;flex:1;justify-content:space-between;}
   .rp-kicker{font-family:var(--font-m);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);}
   .rp-title{font-family:var(--font-b);font-weight:700;font-size:24px;line-height:1.3;color:var(--ink);}
   .rp-tagline{font-family:var(--font-b);font-size:17px;color:var(--ink-soft);line-height:1.4;}
@@ -121,7 +122,7 @@
   .rp-formula{border:1px solid var(--rule);background:var(--paper-raised);border-radius:10px;padding:8px 12px;}
   .rp-formula-result{font-family:var(--font-b);font-weight:700;font-size:18px;color:var(--ink);margin-bottom:6px;}
   .rp-formula-h{font-family:var(--font-m);font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:3px;}
-  .rp-formula-eq{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--accent);}
+  .rp-formula-eq{font-family:var(--font-m);font-weight:700;font-size:15px;color:var(--accent);}
   .rp-formula-note{font-family:var(--font-b);font-size:16px;line-height:1.4;color:var(--ink-soft);}
   .rp-question{border-left:2px solid var(--highlight);padding-left:10px;}
   .rp-q-label{font-family:var(--font-m);font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:3px;}
@@ -525,6 +526,7 @@ function rightPanelEl(rp){
     if(rp.tagline) header.appendChild(el("div","rp-tagline",esc(rp.tagline).replace(/\n/g,"<br>")));
     wrap.appendChild(header);
   }
+  var lower = el("div","rp-lower");
   if(rp.timeline && rp.timeline.length){
     var isGrid = rp.timelineLayout==="grid";
     var tl = el("div", isGrid ? "rp-timeline rp-timeline-grid" : "rp-timeline");
@@ -535,7 +537,7 @@ function rightPanelEl(rp){
       item.appendChild(el("div","rp-step-desc",esc(step.desc).replace(/\n/g,"<br>")));
       tl.appendChild(item);
     });
-    wrap.appendChild(tl);
+    lower.appendChild(tl);
   }
   if(rp.formula){
     var fbox = el("div","rp-formula");
@@ -543,7 +545,7 @@ function rightPanelEl(rp){
     if(rp.formula.heading) fbox.appendChild(el("div","rp-formula-h",esc(rp.formula.heading)));
     if(rp.formula.equation) fbox.appendChild(el("div","rp-formula-eq",esc(rp.formula.equation)));
     if(rp.formula.note) fbox.appendChild(el("div","rp-formula-note",esc(rp.formula.note).replace(/\n/g,"<br>")));
-    wrap.appendChild(fbox);
+    lower.appendChild(fbox);
   }
   if(rp.keyQuestion){
     var qbox = el("div","rp-question");
@@ -551,8 +553,9 @@ function rightPanelEl(rp){
     if(rp.keyQuestion.q1) qbox.appendChild(el("div","rp-q1",esc(rp.keyQuestion.q1)));
     if(rp.keyQuestion.lead) qbox.appendChild(el("div","rp-q-lead",esc(rp.keyQuestion.lead)));
     if(rp.keyQuestion.q2) qbox.appendChild(el("div","rp-q2",esc(rp.keyQuestion.q2)));
-    wrap.appendChild(qbox);
+    lower.appendChild(qbox);
   }
+  wrap.appendChild(lower);
   return wrap;
 }
 
