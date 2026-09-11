@@ -309,14 +309,12 @@ function resultsPanel(slide){
       bars.appendChild(row);
     });
     body.appendChild(bars);
-    if(slide.kind==="choiceplus"){
-      var notes = docs.map(function(d){return d.note;}).filter(Boolean);
-      if(notes.length){
-        var fl = el("span","field-label","의견 모음"); fl.style.marginTop="14px"; fl.style.display="block"; body.appendChild(fl);
-        var tw = el("div","wall"); tw.style.marginTop="8px";
-        notes.forEach(function(n){ tw.appendChild(el("div","wall-item",esc(n))); });
-        body.appendChild(tw);
-      }
+    var notes = docs.map(function(d){return d.note;}).filter(Boolean);
+    if(notes.length){
+      var fl = el("span","field-label","의견 모음"); fl.style.marginTop="14px"; fl.style.display="block"; body.appendChild(fl);
+      var tw = el("div","wall"); tw.style.marginTop="8px";
+      notes.forEach(function(n){ tw.appendChild(el("div","wall-item",esc(n))); });
+      body.appendChild(tw);
     }
   } else if(slide.kind==="scale"){
     var values = docs.map(function(d){ return numOf(d.value); });

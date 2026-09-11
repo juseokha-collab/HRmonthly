@@ -130,9 +130,11 @@ function buildForm(slide, container){
       list.appendChild(btn);
     });
     container.appendChild(list);
-    if(slide.kind==="choiceplus" && myAnswer && myAnswer.optionKey){
+    var selectedOpt = myAnswer && slide.options.filter(function(o){return o.k===myAnswer.optionKey;})[0];
+    var needsNote = slide.kind==="choiceplus" || (selectedOpt && selectedOpt.note);
+    if(needsNote && myAnswer && myAnswer.optionKey){
       var f = el("div","field");
-      f.appendChild(el("label","",esc(slide.followup||"의견")));
+      f.appendChild(el("label","",esc(slide.followup||(selectedOpt&&selectedOpt.noteLabel)||"의견")));
       var ta = document.createElement("textarea"); ta.value = (myAnswer&&myAnswer.note) || "";
       f.appendChild(ta);
       var sb = el("button","submit-btn","의견 보내기");
