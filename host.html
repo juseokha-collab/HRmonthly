@@ -107,7 +107,7 @@
   .johari-axis-x{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);text-align:center;}
 
   .image-side{display:flex;align-items:center;justify-content:center;}
-  .image-side img{max-width:100%;max-height:70vh;border-radius:14px;box-shadow:0 8px 28px var(--shadow);}
+  .image-side img{max-width:100%;max-height:70vh;filter:brightness(.9) saturate(.85);-webkit-mask-image:radial-gradient(ellipse 68% 68% at center, black 50%, transparent 96%);mask-image:radial-gradient(ellipse 68% 68% at center, black 50%, transparent 96%);}
 
   .wall{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
   .wall-item{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 13px;font-size:14px;max-width:280px;box-shadow:0 1px 2px var(--shadow);}
