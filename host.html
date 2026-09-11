@@ -107,6 +107,7 @@
   .johari-axis-x{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);text-align:center;}
 
   .rp-wrap{display:flex;flex-direction:column;gap:9px;flex:1;justify-content:space-between;}
+  .rp-header{display:flex;flex-direction:column;gap:3px;}
   .rp-kicker{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);}
   .rp-title{font-family:var(--font-b);font-weight:700;font-size:16px;line-height:1.3;color:var(--ink);}
   .rp-tagline{font-family:var(--font-b);font-size:12px;color:var(--ink-soft);line-height:1.4;}
@@ -514,9 +515,13 @@ function compareVisual(slide){
 /* ============================= 우측 참고자료 패널 (콘텐츠 슬라이드용, 정적) ============================= */
 function rightPanelEl(rp){
   var wrap = el("div","rp-wrap");
-  if(rp.kicker) wrap.appendChild(el("div","rp-kicker",esc(rp.kicker)));
-  if(rp.title) wrap.appendChild(el("div","rp-title",esc(rp.title).replace(/\n/g,"<br>")));
-  if(rp.tagline) wrap.appendChild(el("div","rp-tagline",esc(rp.tagline).replace(/\n/g,"<br>")));
+  if(rp.kicker || rp.title || rp.tagline){
+    var header = el("div","rp-header");
+    if(rp.kicker) header.appendChild(el("div","rp-kicker",esc(rp.kicker)));
+    if(rp.title) header.appendChild(el("div","rp-title",esc(rp.title).replace(/\n/g,"<br>")));
+    if(rp.tagline) header.appendChild(el("div","rp-tagline",esc(rp.tagline).replace(/\n/g,"<br>")));
+    wrap.appendChild(header);
+  }
   if(rp.timeline && rp.timeline.length){
     var tl = el("div","rp-timeline");
     rp.timeline.forEach(function(step,i){
