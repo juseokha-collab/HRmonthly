@@ -107,7 +107,7 @@
   .johari-axis-x{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);text-align:center;}
 
   .rp-wrap{display:flex;flex-direction:column;flex:1;}
-  .rp-header{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+  .rp-header{display:flex;flex-direction:column;gap:4px;margin-bottom:30px;}
   .rp-lower{display:flex;flex-direction:column;flex:1;justify-content:space-between;}
   .rp-upper-group{display:flex;flex-direction:column;gap:10px;}
   .rp-kicker{font-family:var(--font-m);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);}
@@ -700,6 +700,9 @@ function render(){
     body.className = "stage-body";
   } else if(slide.rightPanel){
     var sideRP = el("div","stage-side");
+    var rpSpacer = el("div","slide-eyebrow", "SLIDE "+String(local.slideIndex+1).padStart(2,"0"));
+    rpSpacer.style.visibility = "hidden";
+    sideRP.appendChild(rpSpacer);
     sideRP.appendChild(rightPanelEl(slide.rightPanel));
     body.appendChild(sideRP);
     body.className = "stage-body";
