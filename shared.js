@@ -102,9 +102,9 @@ var SLIDES = [
 {id:"s14",act:2,kind:"scale",hidePrompt:true,title:"① 우리 팀의 성장 가능성?",
  body:["현재의 크기보다 중요한 것은 앞으로 만들어낼 수 있는 크기입니다.","주요 지표: 매출 · 고객 · 사업 규모 · 신규 BM"],
  visual:{type:"growthbars",scaleMax:80,series:[
-   {year:"2024",dual:true,baseKey:"s14-2024-base",totalKey:"s14-2024-total"},
-   {year:"2025",dual:true,baseKey:"s14-2025-base",totalKey:"s14-2025-total"},
-   {year:"2026(계획)",dual:false,totalKey:"s14-2026-total"},
+   {year:"2024",dual:true,base:48,total:76.5},
+   {year:"2025",dual:true,base:61,total:65},
+   {year:"2026(계획)",dual:false,total:78},
    {year:"2027",question:true}
  ]},
  scale:{unit:"점",promptShort:"우리 팀의 성장성 점수",min:0,max:100},
@@ -270,31 +270,18 @@ function renderVisual(container, v, blankFn){
         track.appendChild(el("div","gbar-q","?"));
         col.appendChild(track);
       } else {
-        var baseFill = el("div","gbar-fill base");
-        var overlayFill = s.dual ? el("div","gbar-fill overlay") : null;
+        var baseVal = s.dual ? s.base : s.total;
+        var totalVal = s.total;
+        var basePct = Math.max(0,Math.min(100, baseVal/scaleMax*100));
+        var totalPct = Math.max(0,Math.min(100, totalVal/scaleMax*100));
+        var baseFill = el("div","gbar-fill base"); baseFill.style.height = basePct+"%";
         track.appendChild(baseFill);
-        if(overlayFill) track.appendChild(overlayFill);
-        col.appendChild(track);
-        var totalInput=null, baseInput=null;
-        var updateHeights = function(){
-          var baseVal = parseFloat(s.dual ? (baseInput&&baseInput.value) : (totalInput&&totalInput.value))||0;
-          var totalVal = s.dual ? (parseFloat(totalInput&&totalInput.value)||0) : baseVal;
-          var basePct = Math.max(0,Math.min(100, baseVal/scaleMax*100));
-          var totalPct = Math.max(0,Math.min(100, totalVal/scaleMax*100));
-          baseFill.style.height = basePct+"%";
-          if(overlayFill){ overlayFill.style.bottom = basePct+"%"; overlayFill.style.height = Math.max(0,totalPct-basePct)+"%"; }
-        };
-        var inputsWrap = el("div","gbar-inputs");
         if(s.dual){
-          var r1 = el("div","gbar-input-row"); r1.appendChild(el("span","gbar-tag","목표")); if(blankFn){ totalInput = blankFn(s.totalKey,{placeholder:"0",onInput:updateHeights}); r1.appendChild(totalInput); }
-          var r2 = el("div","gbar-input-row"); r2.appendChild(el("span","gbar-tag","실적")); if(blankFn){ baseInput = blankFn(s.baseKey,{placeholder:"0",onInput:updateHeights}); r2.appendChild(baseInput); }
-          inputsWrap.appendChild(r1); inputsWrap.appendChild(r2);
-        } else {
-          var r3 = el("div","gbar-input-row"); r3.appendChild(el("span","gbar-tag","계획")); if(blankFn){ totalInput = blankFn(s.totalKey,{placeholder:"0",onInput:updateHeights}); r3.appendChild(totalInput); }
-          inputsWrap.appendChild(r3);
+          var overlayFill = el("div","gbar-fill overlay");
+          overlayFill.style.bottom = basePct+"%"; overlayFill.style.height = Math.max(0,totalPct-basePct)+"%";
+          track.appendChild(overlayFill);
         }
-        updateHeights();
-        col.appendChild(inputsWrap);
+        col.appendChild(track);
       }
       col.appendChild(el("div","gbar-year",esc(s.year)));
       gb.appendChild(col);
