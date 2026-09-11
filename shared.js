@@ -56,6 +56,7 @@ var SLIDES = [
  note:["두 점수가 같습니까?","차이가 있다면 왜 차이가 날까요?"]},
 
 {id:"s07",act:1,kind:"content",title:"내가 보는 나, 남이 보는 나",
+ imageSide:{src:"images/mirror-self-image.png",alt:"거울 속에 비치는 자신의 모습"},
  body:["우리는 나 자신을 평가할 때 다른 사람이 알 수 없는 정보까지 알고 있습니다","— 노력, 고민, 실패, 의도, 과정.","","반면 다른 사람은 주로 결과, 행동, 영향, 함께 일한 경험을 봅니다."],
  visual:{type:"matrix2",colHead:["남이 높게 평가","남이 낮게 평가"],rowHead:["내가 높게 평가","내가 낮게 평가"],cells:[["명확한 강점","평가 Gap"],["Hidden Value","개선 영역"]]},
  caption:"평가의 차이는 '서로 다른 정보'에서 시작",

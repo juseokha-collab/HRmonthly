@@ -106,6 +106,9 @@
   .johari-cell .jc-desc{font-family:var(--font-m);font-size:10px;color:var(--ink-faint);line-height:1.4;white-space:pre-line;}
   .johari-axis-x{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);text-align:center;}
 
+  .image-side{display:flex;align-items:center;justify-content:center;}
+  .image-side img{max-width:100%;max-height:70vh;border-radius:14px;box-shadow:0 8px 28px var(--shadow);}
+
   .wall{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
   .wall-item{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 13px;font-size:14px;max-width:280px;box-shadow:0 1px 2px var(--shadow);}
   .wall.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;}
@@ -618,6 +621,12 @@ function render(){
     var side = el("div","stage-side");
     side.appendChild(resultsPanel(slide));
     body.appendChild(side);
+    body.className = "stage-body";
+  } else if(slide.imageSide){
+    var sideImg = el("div","stage-side image-side");
+    var img = document.createElement("img"); img.src = slide.imageSide.src; img.alt = slide.imageSide.alt||"";
+    sideImg.appendChild(img);
+    body.appendChild(sideImg);
     body.className = "stage-body";
   }
   stage.appendChild(body);
