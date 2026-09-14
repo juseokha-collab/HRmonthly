@@ -93,7 +93,14 @@
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
   .pct-sign{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);margin-left:6px;}
   .field-label{font-family:var(--font-m);font-size:11.5px;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;display:block;}
-  .side-extra-img{max-width:100%;margin-top:18px;border-radius:10px;border:1px solid var(--rule);}
+  .side-extra-img{max-width:67%;margin-top:18px;border-radius:10px;border:1px solid var(--rule);opacity:.8;}
+  .pie-wrap{display:flex;gap:18px;align-items:center;margin-top:18px;}
+  .pie-chart{width:120px;height:120px;border-radius:50%;flex:none;}
+  .pie-legend{display:flex;flex-direction:column;gap:4px;}
+  .pie-legend-row{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:11.5px;color:var(--ink-soft);}
+  .pie-dot{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block;}
+  .pie-legend-label{flex:1;}
+  .pie-legend-pct{font-weight:700;color:var(--ink);}
   .stat-pair{display:flex;gap:16px;}
   .stat-pair .sp-item{flex:1;border:1px solid var(--rule);border-radius:10px;padding:12px 14px;background:var(--paper);}
   .stat-pair .sp-item .sp-l{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);}
@@ -253,19 +260,21 @@
   .help-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--rule);background:var(--paper-raised);color:var(--ink-faint);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;}
 
   .reveal-toggle{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:5px 12px;font-family:var(--font-m);font-weight:600;font-size:12px;color:var(--ink);}
-  .rvc-wrap{display:flex;gap:28px;}
-  .rvc-group{display:flex;flex-direction:column;align-items:center;gap:8px;}
-  .rvc-glabel{font-family:var(--font-b);font-weight:700;font-size:13px;color:var(--ink);}
-  .rvc-bars{display:flex;gap:10px;align-items:flex-end;}
-  .rvc-col{display:flex;flex-direction:column;align-items:center;gap:4px;width:66px;}
-  .rvc-track{width:100%;height:140px;background:rgba(255,255,255,.06);border-radius:8px 8px 0 0;position:relative;overflow:hidden;}
-  .rvc-fill{position:absolute;left:0;right:0;bottom:0;width:100%;height:0;transition:height .8s ease;}
+  .rvc-wrap{display:flex;gap:42px;}
+  .rvc-group{display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .rvc-glabel{font-family:var(--font-b);font-weight:700;font-size:19px;color:var(--ink);}
+  .rvc-bars{display:flex;gap:15px;align-items:flex-end;}
+  .rvc-col{display:flex;flex-direction:column;align-items:center;gap:6px;width:99px;}
+  .rvc-track{width:100%;height:210px;position:relative;overflow:visible;}
+  .rvc-clip{position:absolute;inset:0;background:rgba(255,255,255,.06);border-radius:8px 8px 0 0;overflow:hidden;}
+  .rvc-fill{position:absolute;left:0;right:0;bottom:0;width:100%;height:0;transition:height 1.6s ease;}
   .rvc-fill.target{background:rgba(255,255,255,.3);}
   .rvc-fill.actual{background:var(--accent);}
   .rvc-fill.actual.negative{background:var(--danger);}
-  .rvc-tag{font-family:var(--font-m);font-size:10px;color:var(--ink-faint);}
-  .rvc-val{font-family:var(--font-m);font-weight:700;font-size:12.5px;color:var(--ink);}
-  .rvc-pct{font-family:var(--font-m);font-weight:700;font-size:12px;color:var(--accent2);}
+  .rvc-float{position:absolute;left:0;right:0;bottom:100%;margin-bottom:6px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .rvc-tag{font-family:var(--font-m);font-size:15px;color:var(--ink-faint);}
+  .rvc-val{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--ink);}
+  .rvc-pct{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--accent2);}
   .rvc-fade{opacity:0;transition:opacity .5s ease;}
   .rvc-fade.in{opacity:1;}
   .reveal-line{font-family:var(--font-b);font-size:16px;line-height:1.85;color:var(--ink-soft);}
@@ -394,6 +403,7 @@ function resultsPanel(slide){
       bars.appendChild(row);
     });
     body.appendChild(bars);
+    if(slide.showPie){ body.appendChild(pieChartEl(slide.options, counts, total)); }
     var notes = docs.map(function(d){return d.note;}).filter(Boolean);
     if(notes.length){
       var fl = el("span","field-label","의견 모음"); fl.style.marginTop="14px"; fl.style.display="block"; body.appendChild(fl);
@@ -588,6 +598,35 @@ function rightPanelEl(rp){
   return wrap;
 }
 
+/* ============================= 선택형 응답용 파이차트 (여백 활용) ============================= */
+var PIE_COLORS = ["#A855F7","#E056FD","#60A5FA","#34D399","#FBBF24","#FB7185","#F472B6","#22D3EE"];
+function pieChartEl(items, counts, total){
+  var wrap = el("div","pie-wrap");
+  var chart = el("div","pie-chart");
+  var acc = 0; var stops = [];
+  items.forEach(function(o,i){
+    var count = counts[o.k]||0;
+    var pct = total? (count/total*100) : 0;
+    stops.push(PIE_COLORS[i%PIE_COLORS.length]+" "+acc+"% "+(acc+pct)+"%");
+    acc += pct;
+  });
+  chart.style.background = stops.length ? ("conic-gradient("+stops.join(",")+")") : "var(--rule)";
+  wrap.appendChild(chart);
+  var legend = el("div","pie-legend");
+  items.forEach(function(o,i){
+    var count = counts[o.k]||0;
+    var pct = total? Math.round(count/total*100) : 0;
+    var row = el("div","pie-legend-row");
+    var dot = el("span","pie-dot"); dot.style.background = PIE_COLORS[i%PIE_COLORS.length];
+    row.appendChild(dot);
+    row.appendChild(el("span","pie-legend-label",(o.em?o.em+" ":"")+esc(o.l)));
+    row.appendChild(el("span","pie-legend-pct",pct+"%"));
+    legend.appendChild(row);
+  });
+  wrap.appendChild(legend);
+  return wrap;
+}
+
 /* ============================= 9월 현재 공개 슬라이드용 애니메이션 막대그래프 ============================= */
 function buildRevealChart(chart){
   var wrap = el("div","rvc-wrap");
@@ -599,36 +638,43 @@ function buildRevealChart(chart){
 
     var tCol = el("div","rvc-col");
     var tTrack = el("div","rvc-track");
+    var tFloat = el("div","rvc-float");
+    tFloat.appendChild(el("div","rvc-val", g.target.toFixed(2)+g.unit));
+    tTrack.appendChild(tFloat);
+    var tClip = el("div","rvc-clip");
     var tFill = el("div","rvc-fill target");
-    tTrack.appendChild(tFill);
+    tClip.appendChild(tFill);
+    tTrack.appendChild(tClip);
     tCol.appendChild(tTrack);
     tCol.appendChild(el("div","rvc-tag","목표"));
-    tCol.appendChild(el("div","rvc-val", g.target.toFixed(2)+g.unit));
     bars.appendChild(tCol);
 
     var aCol = el("div","rvc-col");
     var aTrack = el("div","rvc-track");
+    var aFloat = el("div","rvc-float rvc-fade");
+    var aVal = el("div","rvc-val", g.actual.toFixed(1)+g.unit);
+    var pct = el("div","rvc-pct", "목표대비 "+Math.round(g.actual/g.target*100)+"%");
+    aFloat.appendChild(aVal); aFloat.appendChild(pct);
+    aTrack.appendChild(aFloat);
+    var aClip = el("div","rvc-clip");
     var aFill = el("div","rvc-fill actual"+(g.actual<0?" negative":""));
-    aTrack.appendChild(aFill);
+    aClip.appendChild(aFill);
+    aTrack.appendChild(aClip);
     aCol.appendChild(aTrack);
     aCol.appendChild(el("div","rvc-tag","9월 누적"));
-    var aVal = el("div","rvc-val rvc-fade", g.actual.toFixed(1)+g.unit);
-    aCol.appendChild(aVal);
-    var pct = el("div","rvc-pct rvc-fade", "목표대비 "+Math.round(g.actual/g.target*100)+"%");
-    aCol.appendChild(pct);
     bars.appendChild(aCol);
 
     group.appendChild(bars);
     wrap.appendChild(group);
 
     targetFills.push({el:tFill, pct:100});
-    actualFills.push({el:aFill, pct:Math.max(0,Math.min(130, Math.abs(g.actual)/g.target*100)), valEl:aVal, pctEl:pct});
+    actualFills.push({el:aFill, pct:Math.max(0,Math.min(130, Math.abs(g.actual)/g.target*100)), floatEl:aFloat});
   });
 
-  setTimeout(function(){ targetFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 60);
+  setTimeout(function(){ targetFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 100);
   setTimeout(function(){
-    actualFills.forEach(function(f){ f.el.style.height = f.pct+"%"; f.valEl.classList.add("in"); f.pctEl.classList.add("in"); });
-  }, 950);
+    actualFills.forEach(function(f){ f.el.style.height = f.pct+"%"; f.floatEl.classList.add("in"); });
+  }, 1900);
 
   return wrap;
 }
