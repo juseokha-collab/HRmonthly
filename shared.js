@@ -101,14 +101,8 @@ var SLIDES = [
  caption:"시장이 평가하는 나의 미래가치를 어떻게 높일 것인가?",
  note:["열심히 하는 것과 주가가 오르는 것은 같은 이야기가 아닐 수 있습니다.","내가 투자한 시간과 에너지가 시장가치로 전환되고 있는지를 봐야 합니다."]},
 
-{id:"s12",act:1,kind:"content",title:"이제 '우리 팀, HR사업개발팀' 차원에서 생각해 볼까요?",
- body:[],
- visual:{type:"bridge",left:["성장성","안정성","수익성","시장평가"],right:["성장성","안정성","수익성","시장평가"],leftLabel:"개인의 가치평가",rightLabel:"조직의 가치평가",center:"HR사업개발팀이라는 자산은\n지금 얼마짜리일까?"},
- caption:"이제부터 우리는 '팀원'이 아니라 '투자자'의 시선으로 우리 팀을 보겠습니다.",
- note:[]},
-
-{id:"s13",act:2,kind:"numquiz",hidePrompt:true,title:"HR사업개발팀 Investment Memo",
- body:["여러분은 우리 팀의 2026년 목표를 얼마나 기억하고 있을까요?","숫자를 직접 입력해보세요 — 정답은 다음 화면에서 공개됩니다."],
+{id:"s13",act:2,kind:"numquiz",hidePrompt:true,title:"HR사업개발팀은 얼마로 평가할 수 있을까요?",
+ body:["여러분은 우리 팀의 2026년 목표를 얼마나 기억하고 있을까요?","숫자를 직접 입력해보세요 — 정답은 다음 화면에서 공개됩니다.","이제부터 우리는 '팀원'이 아니라 '투자자'의 시선으로 우리 팀을 보겠습니다."],
  quiz:{groups:[
    {k:"revenue",label:"2026 매출액 목표는? 목표 달성율은?",targetLabel:"매출액 목표",targetUnit:"억",rateLabel:"목표 달성율",rateUnit:"%"},
    {k:"profit",label:"2026 직접이익 목표는? 목표 달성율은?",targetLabel:"직접이익 목표",targetUnit:"억",rateLabel:"목표 달성율",rateUnit:"%"}
