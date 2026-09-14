@@ -13,6 +13,7 @@ var SLIDES = [
  visual:{type:"pills",items:["반갑습니다","오랜만입니다","자유롭게","솔직하게","함께"]}},
 
 {id:"s01",act:1,kind:"content",title:"투자! 무엇을? 얼마나?",
+ videoSide:{youtubeId:"vjShPuqIaZo",start:56,end:87},
  body:["우리는 매일 투자합니다. 무언가에...","","돈, 시간, 에너지, 관계, 커리어 등 나와 관련된...","그런데... 내가 중요하다고 생각하는 것과","다른 사람이 중요하다고 생각하는 것이 항상 같지는 않다는 것입니다."],
  visual:{type:"pills",items:["MONEY","TIME","ENERGY","CAREER","RELATIONSHIP","ME"]},
  caption:"돈보다 더 중요한 투자는 무엇일까요?",
