@@ -21,7 +21,7 @@ var SLIDES = [
 
 {id:"s02",act:1,kind:"choice",title:"1억이 생긴다면,\n어디에 투자하시겠습니까?",
  body:["조건은 하나입니다.","1억을 반드시 투자해야 합니다.","","당신의 선택은?"],
- options:[{k:"kr_top",l:"국내주식(삼전닉스)"},{k:"kr_etc",l:"국내주식(기타)"},{k:"overseas",l:"해외주식"},{k:"deposit",l:"예금 / 채권"},{k:"self",l:"나 자신"},{k:"family",l:"가족 / 지인"},{k:"etc",l:"기타",note:true,noteLabel:"기타를 선택하셨다면, 어떤 항목인가요?"}],
+ options:[{k:"kr_top",l:"국내주식(삼전닉스)"},{k:"kr_etc",l:"국내주식(기타)"},{k:"overseas",l:"해외주식/채권 등"},{k:"experience",l:"경험"},{k:"career",l:"커리어"},{k:"health",l:"건강"},{k:"etc",l:"기타",note:true,noteLabel:"기타를 선택하셨다면, 어떤 항목인가요?"}],
  caption:"같은 1억원, 다른 선택! Why?",
  note:["어떤 선택이 맞는지가 중요한 게 아닙니다.","왜 그걸 선택했는지가 중요합니다.","여기서부터 사람마다 판단 기준이 다르다는 걸 볼 수 있습니다."]},
 
