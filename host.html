@@ -253,6 +253,21 @@
   .help-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--rule);background:var(--paper-raised);color:var(--ink-faint);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;}
 
   .reveal-toggle{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:5px 12px;font-family:var(--font-m);font-weight:600;font-size:12px;color:var(--ink);}
+  .rvc-wrap{display:flex;gap:28px;}
+  .rvc-group{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .rvc-glabel{font-family:var(--font-b);font-weight:700;font-size:13px;color:var(--ink);}
+  .rvc-bars{display:flex;gap:10px;align-items:flex-end;}
+  .rvc-col{display:flex;flex-direction:column;align-items:center;gap:4px;width:66px;}
+  .rvc-track{width:100%;height:140px;background:rgba(255,255,255,.06);border-radius:8px 8px 0 0;position:relative;overflow:hidden;}
+  .rvc-fill{position:absolute;left:0;right:0;bottom:0;width:100%;height:0;transition:height .8s ease;}
+  .rvc-fill.target{background:rgba(255,255,255,.3);}
+  .rvc-fill.actual{background:var(--accent);}
+  .rvc-fill.actual.negative{background:var(--danger);}
+  .rvc-tag{font-family:var(--font-m);font-size:10px;color:var(--ink-faint);}
+  .rvc-val{font-family:var(--font-m);font-weight:700;font-size:12.5px;color:var(--ink);}
+  .rvc-pct{font-family:var(--font-m);font-weight:700;font-size:12px;color:var(--accent2);}
+  .rvc-fade{opacity:0;transition:opacity .5s ease;}
+  .rvc-fade.in{opacity:1;}
   .reveal-line{font-family:var(--font-b);font-size:16px;line-height:1.85;color:var(--ink-soft);}
   .reveal-line.hero{font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;color:var(--ink);}
   .stage-main.reveal-pair .ra-row{display:flex;align-items:flex-start;}
@@ -573,6 +588,51 @@ function rightPanelEl(rp){
   return wrap;
 }
 
+/* ============================= 9월 현재 공개 슬라이드용 애니메이션 막대그래프 ============================= */
+function buildRevealChart(chart){
+  var wrap = el("div","rvc-wrap");
+  var targetFills = [], actualFills = [];
+  chart.groups.forEach(function(g){
+    var group = el("div","rvc-group");
+    group.appendChild(el("div","rvc-glabel",esc(g.label)));
+    var bars = el("div","rvc-bars");
+
+    var tCol = el("div","rvc-col");
+    var tTrack = el("div","rvc-track");
+    var tFill = el("div","rvc-fill target");
+    tTrack.appendChild(tFill);
+    tCol.appendChild(tTrack);
+    tCol.appendChild(el("div","rvc-tag","목표"));
+    tCol.appendChild(el("div","rvc-val", g.target.toFixed(2)+g.unit));
+    bars.appendChild(tCol);
+
+    var aCol = el("div","rvc-col");
+    var aTrack = el("div","rvc-track");
+    var aFill = el("div","rvc-fill actual"+(g.actual<0?" negative":""));
+    aTrack.appendChild(aFill);
+    aCol.appendChild(aTrack);
+    aCol.appendChild(el("div","rvc-tag","9월 누적"));
+    var aVal = el("div","rvc-val rvc-fade", g.actual.toFixed(1)+g.unit);
+    aCol.appendChild(aVal);
+    var pct = el("div","rvc-pct rvc-fade", "목표대비 "+Math.round(g.actual/g.target*100)+"%");
+    aCol.appendChild(pct);
+    bars.appendChild(aCol);
+
+    group.appendChild(bars);
+    wrap.appendChild(group);
+
+    targetFills.push({el:tFill, pct:100});
+    actualFills.push({el:aFill, pct:Math.max(0,Math.min(130, Math.abs(g.actual)/g.target*100)), valEl:aVal, pctEl:pct});
+  });
+
+  setTimeout(function(){ targetFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 60);
+  setTimeout(function(){
+    actualFills.forEach(function(f){ f.el.style.height = f.pct+"%"; f.valEl.classList.add("in"); f.pctEl.classList.add("in"); });
+  }, 950);
+
+  return wrap;
+}
+
 /* ============================= 참여 QR 오버레이 ============================= */
 function joinUrl(){
   return location.href.replace(/host\.html(\?.*)?(#.*)?$/i, "index.html");
@@ -651,14 +711,25 @@ function render(){
     row1.appendChild(right1);
     main.appendChild(row1);
 
-    var maxRows = Math.max(blines.length, rlines.length-1);
-    for(var ri=0; ri<maxRows; ri++){
-      var row = el("div","ra-row");
-      row.appendChild(el("div","ra-left slide-body", blines[ri]!=null?esc(blines[ri]):""));
-      var rc = el("div","ra-right");
-      if(open && rlines[ri+1]!=null) rc.appendChild(el("div","reveal-line", esc(rlines[ri+1])));
-      row.appendChild(rc);
-      main.appendChild(row);
+    if(slide.sideReveal.chart){
+      var rowChart = el("div","ra-row");
+      var leftCell = el("div","ra-left slide-body");
+      blines.forEach(function(l){ leftCell.appendChild(el("div","ln",esc(l))); });
+      rowChart.appendChild(leftCell);
+      var rightCell = el("div","ra-right");
+      if(open) rightCell.appendChild(buildRevealChart(slide.sideReveal.chart));
+      rowChart.appendChild(rightCell);
+      main.appendChild(rowChart);
+    } else {
+      var maxRows = Math.max(blines.length, rlines.length-1);
+      for(var ri=0; ri<maxRows; ri++){
+        var row = el("div","ra-row");
+        row.appendChild(el("div","ra-left slide-body", blines[ri]!=null?esc(blines[ri]):""));
+        var rc = el("div","ra-right");
+        if(open && rlines[ri+1]!=null) rc.appendChild(el("div","reveal-line", esc(rlines[ri+1])));
+        row.appendChild(rc);
+        main.appendChild(row);
+      }
     }
 
     if(slide.caption){

@@ -112,7 +112,12 @@ var SLIDES = [
 {id:"s13r",act:2,kind:"content",title:"2026년 목표, 공개합니다",
  body:["2026년 매출액 목표는 78.07억","2026년 직접이익 목표는 5.1억"],
  caption:"우리가 지금 향하고 있는 숫자입니다.",
- sideReveal:{label:"9월 현재",lines:["2026년 9월 현재까지의","매출액 누계 54.7억","직접이익 누계 -1.4억"]},
+ sideReveal:{label:"9월 현재",lines:["2026년 9월 현재까지의"],
+   chart:{groups:[
+     {label:"매출액",target:78.07,actual:54.7,unit:"억"},
+     {label:"직접이익",target:5.1,actual:-1.4,unit:"억"}
+   ]}
+ },
  note:["방금 여러분이 예상한 숫자와 비교해보세요.","이 숫자를 기억하는 것이 오늘 이 시간의 작은 목표입니다."]},
 
 {id:"s14",act:2,kind:"scale",hidePrompt:true,title:"① 우리 팀의 성장 가능성?",
