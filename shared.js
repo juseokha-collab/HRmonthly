@@ -321,6 +321,7 @@ function renderVisual(container, v, blankFn, extra){
     plot.appendChild(grid);
 
     var barsRow = el("div","gbar-bars-row");
+    var animFills = [];
     v.series.forEach(function(s){
       var track = el("div","gbar-track");
       if(s.question){
@@ -334,12 +335,14 @@ function renderVisual(container, v, blankFn, extra){
         var totalVal = s.total;
         var basePct = Math.max(0,Math.min(100, baseVal/scaleMax*100));
         var totalPct = Math.max(0,Math.min(100, totalVal/scaleMax*100));
-        var baseFill = el("div","gbar-fill base"); baseFill.style.height = basePct+"%";
+        var baseFill = el("div","gbar-fill base");
         track.appendChild(baseFill);
+        animFills.push({el:baseFill, pct:basePct});
         if(s.dual){
           var overlayFill = el("div","gbar-fill overlay");
-          overlayFill.style.bottom = basePct+"%"; overlayFill.style.height = Math.max(0,totalPct-basePct)+"%";
+          overlayFill.style.bottom = basePct+"%";
           track.appendChild(overlayFill);
+          animFills.push({el:overlayFill, pct:Math.max(0,totalPct-basePct)});
         }
         if(s.revealLabel){
           var lbl = el("div","gbar-reveal-label", esc(s.revealLabel));
@@ -352,6 +355,7 @@ function renderVisual(container, v, blankFn, extra){
     plot.appendChild(barsRow);
     chartRow.appendChild(plot);
     outer.appendChild(chartRow);
+    setTimeout(function(){ animFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 100);
 
     var labelsRow = el("div","gbars-labels-row");
     labelsRow.appendChild(el("div","gbar-axis-spacer"));
@@ -377,10 +381,6 @@ function renderVisual(container, v, blankFn, extra){
     gouter.appendChild(glegend);
 
     var gchartRow = el("div","gbars-chart-row2");
-    var gaxis = el("div","gbar-axis2");
-    gticks.slice().reverse().forEach(function(tv){ gaxis.appendChild(el("div","",String(tv))); });
-    gchartRow.appendChild(gaxis);
-
     var gplot = el("div","gbar-plot2");
     var ggrid = el("div","gbar-grid2");
     gticks.forEach(function(tv){
