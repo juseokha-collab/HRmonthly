@@ -210,14 +210,9 @@ var SLIDES = [
  caption:"'더 많이 하는 것'이 아니라 '어디에 더 투자할 것인가' 방향 결정.",
  note:[]},
 
-{id:"s25",act:4,kind:"sentence",title:"2027년의 나에게",
- body:["나는 앞으로 무엇에 투자하겠습니다.","시간 · 역량 · 경험 · 관계 · 건강 · 돈 · 용기 · 새로운 도전"],
- sentences:[
-   {key:"reason",prefix:"내가 HR사업개발팀에서 일하는 이유는",suffix:"입니다."},
-   {key:"action",prefix:"그런 이유로 나는 (이런저런 준비와 투자를)",suffix:"하려고 합니다."}
- ],
- caption:"결국 가장 중요한 투자 대상은 '나 자신'이다.",
- note:["오늘 회사 이야기를 많이 했지만, 사실 오늘 이야기의 주인공은 회사가 아니었습니다.","우리가 어디에 시간을 쓰고, 어떤 일을 선택하고, 무엇을 중요하게 생각하고, 다른 사람의 평가를 어떻게 받아들이는지에 대한 이야기였습니다.","HR사업개발팀도 결국 사람들의 시간과 역량이 투자되는 하나의 자산입니다.","2027년에는 우리 팀의 가치도, 여러분 한 사람 한 사람의 가치도 지금보다 더 높아졌으면 좋겠습니다."]}
+{id:"s25",act:4,kind:"content",cover:true,
+ title:"HR사업개발팀의 미래는\n당신의 선택과 실행에 달려있습니다",
+ body:["2026년 남은 시간과 새롭게 시작할 2027년","당신의 선택과 실행이 구체화되길 바랍니다."]}
 ];
 
 var INTERACTIVE_KINDS = ["choice","scale","dualscale","wordcloud","dualwordcloud","allocation","choiceplus","openthree","sentence","numquiz"];
