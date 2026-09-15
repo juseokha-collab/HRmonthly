@@ -160,9 +160,9 @@ var SLIDES = [
 {id:"s14",act:2,kind:"scale",hidePrompt:true,bgCenter:true,title:"① 우리 팀의 성장 가능성?",
  body:["현재의 크기보다 중요한 것은 앞으로 만들어낼 수 있는 크기입니다.","주요 지표: 매출 · 고객 · 사업 규모 · 신규 BM"],
  visual:{type:"growthbars",scaleMax:80,series:[
-   {year:"2024",dual:true,base:48,total:76.5,revealLabel:"28.3억"},
-   {year:"2025",dual:true,base:61,total:65,revealLabel:"4.1억"},
-   {year:"2026(계획)",dual:false,total:78},
+   {year:"2024",dual:true,base:48,total:76.5,revealLabel:"28.3억",valueLabel:"76.5억"},
+   {year:"2025",dual:true,base:61,total:65.4,revealLabel:"4.1억",valueLabel:"65.4억"},
+   {year:"2026(계획)",dual:false,total:78.1,valueLabel:"78.1억"},
    {year:"2027",question:true}
  ]},
  scale:{unit:"점",promptShort:"우리 팀의 성장성 점수",min:0,max:100},
@@ -177,15 +177,15 @@ var SLIDES = [
 
 {id:"s16",act:2,kind:"content",title:"③ 수익성 : '많이'가 아니라 '잘' !",
  body:["매출 성장 ≠ 이익 성장","바쁘게 일함 ≠ 높은 생산성","고객이 많음 ≠ 좋은 BM"],
- visual:{type:"groupedbars",scaleMax:25,step:5,legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],groups:[
-   {label:"시스템-하이닉스",values:[22.1,11.6]},
-   {label:"집합-PJT(SKA)",values:[17.2,0.9]},
-   {label:"행사·특강",values:[7.1,1.8]},
-   {label:"시스템-기타",values:[8.8,5.5]},
-   {label:"자체콘텐츠",values:[8.5,7.5]},
-   {label:"러닝메이트 정기",values:[6.1,0.9]},
-   {label:"SKT(VLS·동반)",values:[5.8,5.6]},
-   {label:"러닝메이트 전사",values:[2.5,1.6]}
+ visual:{type:"hbarsplit",scaleMax:25,legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],items:[
+   {label:"시스템-하이닉스",revenue:22.1,profit:11.6},
+   {label:"집합-PJT(SKA)",revenue:17.2,profit:0.9},
+   {label:"행사·특강",revenue:7.1,profit:1.8},
+   {label:"시스템-기타",revenue:8.8,profit:5.5},
+   {label:"자체콘텐츠",revenue:8.5,profit:7.5},
+   {label:"러닝메이트 정기",revenue:6.1,profit:0.9},
+   {label:"SKT(VLS·동반)",revenue:5.8,profit:5.6},
+   {label:"러닝메이트 전사",revenue:2.5,profit:1.6}
  ]},
  caption:"우리가 만든 매출 중, 무엇이 진짜 기업가치로 남는가?",
  note:["이 부분은 특히 사업개발팀이 냉정하게 봐야 합니다.","매출을 만드는 능력과 좋은 BM을 만드는 능력은 다릅니다."]},
@@ -242,7 +242,8 @@ function renderVisual(container, v, blankFn, extra){
     tw.appendChild(el("span","vx bl",esc(v.vertices[1])));
     tw.appendChild(el("span","vx br",esc(v.vertices[2])));
     var positions=[["46%","18%"],["18%","54%"],["72%","30%"],["58%","70%"],["30%","78%"],["78%","62%"]];
-    v.orbit.forEach(function(w,i){ var s=el("span","orbit",esc(w)); var p=positions[i%positions.length]; s.style.left=p[0]; s.style.top=p[1]; tw.appendChild(s); });
+    var orbitColors=["#F472B6","#60A5FA","#34D399","#FBBF24","#A78BFA","#FB7185"];
+    v.orbit.forEach(function(w,i){ var s=el("span","orbit",esc(w)); var p=positions[i%positions.length]; s.style.left=p[0]; s.style.top=p[1]; s.style.color=orbitColors[i%orbitColors.length]; tw.appendChild(s); });
     container.appendChild(tw);
   } else if(v.type==="flow"){
     var fc = el("div","flow-chain");
@@ -344,6 +345,11 @@ function renderVisual(container, v, blankFn, extra){
           track.appendChild(overlayFill);
           animFills.push({el:overlayFill, pct:Math.max(0,totalPct-basePct)});
         }
+        if(s.valueLabel){
+          var vlbl = el("div","gbar-value-label", esc(s.valueLabel));
+          vlbl.style.bottom = totalPct+"%";
+          track.appendChild(vlbl);
+        }
         if(s.revealLabel){
           var lbl = el("div","gbar-reveal-label", esc(s.revealLabel));
           if(!extra.revealOpen) lbl.style.display = "none";
@@ -365,6 +371,39 @@ function renderVisual(container, v, blankFn, extra){
     outer.appendChild(labelsRow);
 
     container.appendChild(outer);
+  } else if(v.type==="hbarsplit"){
+    var hMax = v.scaleMax || 100;
+    var hOuter = el("div","hbar-outer");
+    var hLegend = el("div","gb-legend");
+    v.legend.forEach(function(l){
+      var item = el("span","gb-legend-item");
+      var sw = el("span","gb-swatch"); sw.style.background = l.color;
+      item.appendChild(sw); item.appendChild(document.createTextNode(l.label));
+      hLegend.appendChild(item);
+    });
+    hOuter.appendChild(hLegend);
+
+    var hRows = el("div","hbar-rows");
+    var hFills = [];
+    v.items.forEach(function(it){
+      var row = el("div","hbar-row");
+      row.appendChild(el("div","hbar-label", esc(it.label)));
+      var track = el("div","hbar-track");
+      var revFill = el("div","hbar-fill hbar-revenue"); revFill.style.background = v.legend[0].color;
+      var profFill = el("div","hbar-fill hbar-profit"); profFill.style.background = v.legend[1].color;
+      track.appendChild(revFill); track.appendChild(profFill);
+      row.appendChild(track);
+      var valWrap = el("div","hbar-values");
+      valWrap.appendChild(el("span","hbar-val-rev", String(it.revenue)));
+      valWrap.appendChild(el("span","hbar-val-prof", String(it.profit)));
+      row.appendChild(valWrap);
+      hRows.appendChild(row);
+      hFills.push({el:revFill, pct:Math.max(0,Math.min(100,it.revenue/hMax*100))});
+      hFills.push({el:profFill, pct:Math.max(0,Math.min(100,it.profit/hMax*100))});
+    });
+    hOuter.appendChild(hRows);
+    container.appendChild(hOuter);
+    setTimeout(function(){ hFills.forEach(function(f){ f.el.style.width = f.pct+"%"; }); }, 100);
   } else if(v.type==="groupedbars"){
     var gscaleMax = v.scaleMax || 100;
     var gstep = v.step || 10;
