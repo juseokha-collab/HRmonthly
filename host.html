@@ -119,6 +119,7 @@
   .delta-note{font-family:var(--font-m);font-size:12.5px;color:var(--ink-soft);}
   .delta-note.clickable{cursor:pointer;text-decoration:underline dotted;text-decoration-color:var(--ink-faint);}
   .delta-extra{margin-top:14px;display:flex;flex-direction:column;gap:4px;}
+  .delta-extra.clickable{cursor:pointer;}
   .delta-extra-line{font-family:var(--font-m);font-size:12.5px;color:var(--ink-soft);}
 
   .radial-wrap{position:relative;margin:12px auto 0;}
@@ -170,6 +171,7 @@
 
   .image-side{display:flex;align-items:center;justify-content:center;padding:24px;}
   .image-side img{max-width:100%;max-height:64vh;filter:brightness(.82) contrast(.92) saturate(.7);-webkit-mask-image:radial-gradient(ellipse 60% 60% at center, black 30%, transparent 88%);mask-image:radial-gradient(ellipse 60% 60% at center, black 30%, transparent 88%);}
+  .image-side img.square{-webkit-mask-image:none;mask-image:none;border-radius:14px;border:1px solid var(--rule);box-shadow:0 8px 28px var(--shadow);}
 
   .wall{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
   .wall-item{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 13px;font-size:14px;max-width:280px;box-shadow:0 1px 2px var(--shadow);}
@@ -343,6 +345,7 @@ var numquizOpen = {};     // numquiz 결과 패널의 "최고/최저" 상세 토
 var revealOpen = {};      // sideReveal 슬라이드의 우측 박스 열림 상태 (slide id -> bool)
 var gbarRevealOpen = {};  // growthbars 슬라이드의 "?" 클릭 시 라벨 노출 상태 (slide id -> bool)
 var dualscaleOpen = {};   // dualscale 결과 패널의 "평균 차이" 클릭 시 상세 통계 노출 상태 (slide id -> bool)
+var scaleLinkOpen = {};   // scale 결과 패널의 최고/최저점 클릭 시 연계 설문(s06) 노출 상태 (slide id -> bool)
 var warmupState = {slideId:null, stage:0, count:0};  // 워밍업 슬라이드 클릭 진행 상태
 var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
 
@@ -445,6 +448,23 @@ function resultsPanel(slide){
     label.appendChild(el("div","rl-v", (scoreAvg!=null? scoreAvg.toFixed(1) : "—")+" / "+max));
     pair.appendChild(ring); pair.appendChild(label);
     body.appendChild(pair);
+
+    var validDocs = docs.filter(function(d){ return numOf(d.value)!=null; });
+    if(validDocs.length){
+      var maxDoc = validDocs.reduce(function(x,y){ return numOf(y.value)>numOf(x.value)?y:x; });
+      var minDoc = validDocs.reduce(function(x,y){ return numOf(y.value)<numOf(x.value)?y:x; });
+      var extremeBox = el("div","delta-extra clickable");
+      extremeBox.appendChild(el("div","delta-extra-line","가장 높은 점수 "+numOf(maxDoc.value)));
+      extremeBox.appendChild(el("div","delta-extra-line","가장 낮은 점수 "+numOf(minDoc.value)));
+      extremeBox.addEventListener("click", function(){ scaleLinkOpen[slide.id] = !scaleLinkOpen[slide.id]; render(); });
+      if(scaleLinkOpen[slide.id]){
+        var maxLinked = allAnswers.filter(function(d){ return d.slideId==="s06" && d.uid===maxDoc.uid; })[0];
+        var minLinked = allAnswers.filter(function(d){ return d.slideId==="s06" && d.uid===minDoc.uid; })[0];
+        if(maxLinked) extremeBox.appendChild(el("div","delta-extra-line","가장 높은 점수 > 내가 평가하는 나 "+numOf(maxLinked.self)+" > 내가 예상하는 타인의 점수 "+numOf(maxLinked.perceived)));
+        if(minLinked) extremeBox.appendChild(el("div","delta-extra-line","가장 낮은 점수 > 내가 평가하는 나 "+numOf(minLinked.self)+" > 내가 예상하는 타인의 점수 "+numOf(minLinked.perceived)));
+      }
+      body.appendChild(extremeBox);
+    }
   } else if(slide.kind==="dualscale"){
     var selfs = docs.map(function(d){ return numOf(d.self); });
     var percs = docs.map(function(d){ return numOf(d.perceived); });
@@ -921,6 +941,7 @@ function render(){
   } else if(slide.imageSide){
     var sideImg = el("div","stage-side image-side");
     var img = document.createElement("img"); img.src = slide.imageSide.src; img.alt = slide.imageSide.alt||"";
+    if(slide.imageSide.shape==="square") img.className = "square";
     sideImg.appendChild(img);
     body.appendChild(sideImg);
     body.className = "stage-body";
