@@ -81,6 +81,7 @@
   .slide-title{font-family:var(--font-b);font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;}
   .slide-body{font-size:16px;line-height:1.85;color:var(--ink-soft);max-width:62ch;}
   .slide-body .ln{margin-bottom:2px;}
+  .slide-body .ln.bullet{font-size:19px;font-weight:600;color:var(--ink);}
   .slide-caption{font-family:var(--font-m);font-size:13px;color:var(--ink-faint);border-left:2px solid var(--highlight);padding-left:10px;margin-top:4px;}
   .stage-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--rule);gap:10px;}
   .nav-cluster{display:flex;gap:8px;align-items:center;}
@@ -280,7 +281,7 @@
   .help-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--rule);background:var(--paper-raised);color:var(--ink-faint);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;}
 
   .reveal-toggle{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:5px 12px;font-family:var(--font-m);font-weight:600;font-size:12px;color:var(--ink);}
-  .rvc-wrap{display:flex;gap:42px;}
+  .rvc-wrap{display:flex;justify-content:flex-start;gap:42px;width:100%;margin:0;}
   .rvc-group{display:flex;flex-direction:column;align-items:center;gap:12px;}
   .rvc-glabel{font-family:var(--font-b);font-weight:700;font-size:19px;color:var(--ink);}
   .rvc-bars{display:flex;gap:15px;align-items:flex-end;}
@@ -291,6 +292,8 @@
   .rvc-fill.target{background:rgba(255,255,255,.3);}
   .rvc-fill.actual{background:var(--accent);}
   .rvc-fill.actual.negative{background:var(--danger);}
+  .rvc-neg-zone{width:100%;height:60px;position:relative;margin-top:2px;border-top:1px solid var(--rule);}
+  .rvc-neg-fill{position:absolute;top:0;left:0;right:0;height:0;background:var(--danger);border-radius:0 0 6px 6px;transition:height 1.6s ease;}
   .rvc-float{position:absolute;left:0;right:0;bottom:100%;margin-bottom:6px;display:flex;flex-direction:column;align-items:center;gap:2px;}
   .rvc-tag{font-family:var(--font-m);font-size:15px;color:var(--ink-faint);}
   .rvc-val{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--ink);}
@@ -553,6 +556,11 @@ function resultsPanel(slide){
       kRow.appendChild(helpBtn);
       label.appendChild(kRow);
       label.appendChild(el("div","rl-v", "평균 예상 "+(avgT!=null? avgT.toFixed(2):"—")+g.targetUnit+" · 달성율 "+(avgR!=null?avgR.toFixed(0):"—")+g.rateUnit));
+      var validR = valsR.filter(function(n){return n!=null;});
+      if(validR.length){
+        label.appendChild(el("div","rl-extra", "가장 높은 점수 "+Math.max.apply(null,validR).toFixed(0)+g.rateUnit));
+        label.appendChild(el("div","rl-extra", "가장 낮은 점수 "+Math.min.apply(null,validR).toFixed(0)+g.rateUnit));
+      }
       if(numquizOpen[g.k]){
         var detail = valsT.length ? ("최고 예상 "+Math.max.apply(null,valsT).toFixed(2)+g.targetUnit+" · 최저 예상 "+Math.min.apply(null,valsT).toFixed(2)+g.targetUnit) : "—";
         label.appendChild(el("div","rl-extra", detail));
@@ -692,31 +700,49 @@ function buildRevealChart(chart){
     tCol.appendChild(el("div","rvc-tag","목표"));
     bars.appendChild(tCol);
 
+    var isNeg = g.actual<0;
     var aCol = el("div","rvc-col");
     var aTrack = el("div","rvc-track");
     var aFloat = el("div","rvc-float rvc-fade");
     var aVal = el("div","rvc-val", g.actual.toFixed(1)+g.unit);
-    var pct = el("div","rvc-pct", "목표대비 "+Math.round(g.actual/g.target*100)+"%");
-    aFloat.appendChild(aVal); aFloat.appendChild(pct);
+    aFloat.appendChild(aVal);
     aTrack.appendChild(aFloat);
     var aClip = el("div","rvc-clip");
-    var aFill = el("div","rvc-fill actual"+(g.actual<0?" negative":""));
+    var aFill = el("div","rvc-fill actual"+(isNeg?" negative":""));
     aClip.appendChild(aFill);
     aTrack.appendChild(aClip);
     aCol.appendChild(aTrack);
+    var negFill = null;
+    if(isNeg){
+      var negZone = el("div","rvc-neg-zone");
+      negFill = el("div","rvc-neg-fill");
+      negZone.appendChild(negFill);
+      aCol.appendChild(negZone);
+    }
     aCol.appendChild(el("div","rvc-tag","9월 누적"));
+    var pct = el("div","rvc-pct rvc-fade", "목표대비 "+Math.round(g.actual/g.target*100)+"%");
+    aCol.appendChild(pct);
     bars.appendChild(aCol);
 
     group.appendChild(bars);
     wrap.appendChild(group);
 
     targetFills.push({el:tFill, pct:100});
-    actualFills.push({el:aFill, pct:Math.max(0,Math.min(130, Math.abs(g.actual)/g.target*100)), floatEl:aFloat});
+    actualFills.push({
+      el:aFill, pct: isNeg? 0 : Math.max(0,Math.min(130, g.actual/g.target*100)),
+      floatEl:aFloat, pctEl:pct,
+      negFillEl:negFill, negPct: isNeg? Math.min(100, Math.abs(g.actual)/g.target*100) : 0
+    });
   });
 
   setTimeout(function(){ targetFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 100);
   setTimeout(function(){
-    actualFills.forEach(function(f){ f.el.style.height = f.pct+"%"; f.floatEl.classList.add("in"); });
+    actualFills.forEach(function(f){
+      f.el.style.height = f.pct+"%";
+      if(f.negFillEl) f.negFillEl.style.height = f.negPct+"%";
+      f.floatEl.classList.add("in");
+      f.pctEl.classList.add("in");
+    });
   }, 1900);
 
   return wrap;
@@ -803,7 +829,7 @@ function render(){
     if(slide.sideReveal.chart){
       var rowChart = el("div","ra-row");
       var leftCell = el("div","ra-left slide-body");
-      blines.forEach(function(l){ leftCell.appendChild(el("div","ln",esc(l))); });
+      blines.forEach(function(l){ leftCell.appendChild(el("div", l.indexOf("ㅁ")===0?"ln bullet":"ln", esc(l))); });
       rowChart.appendChild(leftCell);
       var rightCell = el("div","ra-right");
       if(open) rightCell.appendChild(buildRevealChart(slide.sideReveal.chart));
