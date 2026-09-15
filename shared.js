@@ -116,7 +116,13 @@ var SLIDES = [
 
 {id:"s09",act:1,kind:"content",title:"우리는 서로 다른 정보를 가지고 평가한다",
  body:[],
- visual:{type:"table",head:["평가자","주로 보는 것"],rows:[["나","노력 · 과정 · 고민"],["동료","협업 · 관계 · 실행"],["리더","결과 · 영향 · 성장"],["고객","문제 해결 · 체감 가치"],["시장","성과 · 경쟁력 · 가격"]]},
+ visual:{type:"radial",center:"평가",spokes:[
+   {label:"나",desc:"노력 · 과정 · 고민"},
+   {label:"동료",desc:"협업 · 관계 · 실행"},
+   {label:"리더",desc:"결과 · 영향 · 성장"},
+   {label:"고객",desc:"문제 해결 · 체감 가치"},
+   {label:"시장",desc:"성과 · 경쟁력 · 가격"}
+ ]},
  caption:"평가의 차이는 '누가 맞느냐'보다 '무엇을 보고 있느냐'의 차이에서 발생.",
  note:["내가 억울했던 평가가 있다면, 상대방은 나에게 없는 정보를 가지고 있었을 수도 있습니다."]},
 
@@ -398,6 +404,28 @@ function renderVisual(container, v, blankFn, extra){
       thc.appendChild(box);
     });
     container.appendChild(thc);
+  } else if(v.type==="radial"){
+    var rsize = 460, rradius = 190;
+    var rwrap = el("div","radial-wrap"); rwrap.style.width=rsize+"px"; rwrap.style.height=rsize+"px";
+    rwrap.appendChild(el("div","radial-center", esc(v.center)));
+    var rcx = rsize/2, rcy = rsize/2;
+    v.spokes.forEach(function(s,i){
+      var angleDeg = -90 + i*(360/v.spokes.length);
+      var rad = angleDeg*Math.PI/180;
+      var nx = rcx + rradius*Math.cos(rad);
+      var ny = rcy + rradius*Math.sin(rad);
+      var line = el("div","radial-line");
+      line.style.width = rradius+"px"; line.style.left = rcx+"px"; line.style.top = rcy+"px";
+      line.style.transform = "rotate("+angleDeg+"deg)";
+      rwrap.appendChild(line);
+      var node = el("div","radial-node");
+      node.style.left = nx+"px"; node.style.top = ny+"px";
+      node.appendChild(el("div","radial-dot"));
+      node.appendChild(el("div","radial-oval", esc(s.label)));
+      node.appendChild(el("div","radial-desc", esc(s.desc)));
+      rwrap.appendChild(node);
+    });
+    container.appendChild(rwrap);
   } else if(v.type==="johari"){
     var jwrap = el("div","johari-wrap");
     jwrap.appendChild(el("div","johari-axis-y",esc(v.axisY||"")));

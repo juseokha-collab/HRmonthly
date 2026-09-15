@@ -121,6 +121,13 @@
   .delta-extra{margin-top:14px;display:flex;flex-direction:column;gap:4px;}
   .delta-extra-line{font-family:var(--font-m);font-size:12.5px;color:var(--ink-soft);}
 
+  .radial-wrap{position:relative;margin:12px auto 0;}
+  .radial-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:50%;background:var(--accent-grad);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-b);font-weight:700;font-size:20px;z-index:2;box-shadow:0 6px 20px var(--shadow);}
+  .radial-line{position:absolute;height:3px;background:var(--rule);transform-origin:0 50%;z-index:0;}
+  .radial-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:5px;z-index:2;}
+  .radial-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);}
+  .radial-oval{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:8px 20px;font-family:var(--font-b);font-weight:700;font-size:14px;color:var(--ink);white-space:nowrap;}
+  .radial-desc{font-family:var(--font-m);font-size:12px;color:var(--ink-soft);white-space:nowrap;}
   .johari-wrap{display:flex;gap:8px;align-items:stretch;max-width:300px;margin-top:4px;}
   .johari-axis-y{writing-mode:vertical-rl;font-family:var(--font-m);font-size:11px;color:var(--ink-faint);display:flex;align-items:center;justify-content:center;flex:none;}
   .johari-col{display:flex;flex-direction:column;gap:4px;}
