@@ -107,6 +107,8 @@
   .pie-wrap{margin-top:18px;}
   .pie-chart{width:150px;height:150px;border-radius:50%;}
   .stat-pair{display:flex;gap:16px;}
+  .stat-pair-vertical{display:flex;flex-direction:column;gap:10px;}
+  .stat-pair-vertical .sp-item{border:1px solid var(--rule);border-radius:10px;padding:12px 14px;background:var(--paper);}
   .stat-pair .sp-item{flex:1;border:1px solid var(--rule);border-radius:10px;padding:12px 14px;background:var(--paper);}
   .stat-pair .sp-item .sp-l{font-family:var(--font-m);font-size:11px;color:var(--ink-faint);}
   .stat-pair .sp-item .sp-v{font-family:var(--font-m);font-size:24px;color:var(--ink);width:100%;padding:3px 0 0;font-variant-numeric:tabular-nums;}
@@ -435,7 +437,7 @@ function resultsPanel(slide){
   } else if(slide.kind==="dualscale"){
     var selfs = docs.map(function(d){ return numOf(d.self); });
     var percs = docs.map(function(d){ return numOf(d.perceived); });
-    var pair2 = el("div","stat-pair");
+    var pair2 = el("div","stat-pair-vertical");
     slide.fields.forEach(function(f){
       var it = el("div","sp-item"); it.appendChild(el("div","sp-l",esc(f.l)));
       var v = f.k==="self" ? avg(selfs) : avg(percs);
@@ -446,10 +448,6 @@ function resultsPanel(slide){
     var a = avg(selfs), b = avg(percs);
     if(a!=null && b!=null){
       var diff = Math.round((a-b)*10)/10;
-      var dn = el("div","delta-note clickable"); dn.style.marginTop="10px";
-      dn.textContent = diff===0 ? "차이 없음 — 내가 보는 나와 남이 보는 나가 같습니다." : (diff>0? "평균적으로 나를 "+diff+"점 더 높게 봅니다.":"평균적으로 남들이 나를 "+(-diff)+"점 더 높게 봅니다.");
-      dn.addEventListener("click", function(){ dualscaleOpen[slide.id] = !dualscaleOpen[slide.id]; render(); });
-      body.appendChild(dn);
       if(dualscaleOpen[slide.id]){
         var pairs = docs.map(function(d){ return {self:numOf(d.self), perceived:numOf(d.perceived)}; }).filter(function(p){ return p.self!=null && p.perceived!=null; });
         if(pairs.length){
@@ -463,6 +461,10 @@ function resultsPanel(slide){
           body.appendChild(extraBox);
         }
       }
+      var dn = el("div","delta-note clickable"); dn.style.marginTop="10px";
+      dn.textContent = diff===0 ? "차이 없음 — 내가 보는 나와 남이 보는 나가 같습니다." : (diff>0? "평균적으로 나를 "+diff+"점 더 높게 봅니다.":"평균적으로 남들이 나를 "+(-diff)+"점 더 높게 봅니다.");
+      dn.addEventListener("click", function(){ dualscaleOpen[slide.id] = !dualscaleOpen[slide.id]; render(); });
+      body.appendChild(dn);
     }
   } else if(slide.kind==="wordcloud"){
     var texts = docs.map(function(d){ return d.text; }).filter(Boolean);
