@@ -177,7 +177,7 @@ var SLIDES = [
 
 {id:"s16",act:2,kind:"content",title:"③ 수익성 : '많이'가 아니라 '잘' !",
  body:["매출 성장 ≠ 이익 성장","바쁘게 일함 ≠ 높은 생산성","고객이 많음 ≠ 좋은 BM"],
- visual:{type:"hbarsplit",scaleMax:25,legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],items:[
+ visual:{type:"hbarsplit",scaleMax:25,sideImage:{src:"images/slide18-pnl.png",alt:"2025년 손익배분"},legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],items:[
    {label:"시스템-하이닉스",revenue:22.1,profit:11.6},
    {label:"집합-PJT(SKA)",revenue:17.2,profit:0.9},
    {label:"시스템-기타",revenue:8.8,profit:5.5},
@@ -374,6 +374,7 @@ function renderVisual(container, v, blankFn, extra){
     container.appendChild(outer);
   } else if(v.type==="hbarsplit"){
     var hMax = v.scaleMax || 100;
+    var hWrap = el("div","hbar-wrap-row");
     var hOuter = el("div","hbar-outer");
     var hLegend = el("div","gb-legend");
     v.legend.forEach(function(l){
@@ -404,7 +405,9 @@ function renderVisual(container, v, blankFn, extra){
       hFills.push({el:profFill, pct:Math.max(0,Math.min(100,it.profit/hMax*100))});
     });
     hOuter.appendChild(hRows);
-    container.appendChild(hOuter);
+    hWrap.appendChild(hOuter);
+    if(v.sideImage){ hWrap.appendChild(magnifyImageEl(v.sideImage)); }
+    container.appendChild(hWrap);
     setTimeout(function(){ hFills.forEach(function(f){ f.el.style.width = f.pct+"%"; }); }, 100);
   } else if(v.type==="groupedbars"){
     var gscaleMax = v.scaleMax || 100;

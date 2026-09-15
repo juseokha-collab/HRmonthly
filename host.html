@@ -232,7 +232,11 @@
   .value-card{border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px 18px;min-width:150px;flex:1;background:var(--cover-grad);}
   .value-card h4{font-family:var(--font-m);font-size:13px;color:#FDE68A;margin-bottom:5px;}
   .value-card p{font-size:13px;color:#EFE7FF;line-height:1.6;}
-  .hbar-outer{margin-top:8px;max-width:52%;}
+  .hbar-wrap-row{display:flex;gap:24px;align-items:flex-start;margin-top:8px;}
+  .hbar-outer{max-width:52%;}
+  .magnify-wrap{position:relative;flex:1;min-width:0;cursor:crosshair;}
+  .magnify-img{max-width:100%;display:block;border-radius:10px;border:1px solid var(--rule);}
+  .magnify-lens{display:none;position:absolute;width:160px;height:160px;border-radius:50%;border:3px solid var(--accent);box-shadow:0 8px 24px rgba(0,0,0,.5);background-repeat:no-repeat;pointer-events:none;z-index:5;}
   .hbar-rows{display:flex;flex-direction:column;gap:11px;}
   .hbar-row{display:flex;align-items:center;gap:10px;}
   .hbar-label{width:130px;flex:none;font-family:var(--font-m);font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -705,6 +709,29 @@ function topBarColorMap(items, counts){
   });
   return map;
 }
+/* ============================= 호버 시 확대되는 돋보기 이미지 ============================= */
+function magnifyImageEl(imgData){
+  var wrap = el("div","magnify-wrap");
+  var img = document.createElement("img"); img.src = imgData.src; img.alt = imgData.alt||""; img.className = "magnify-img";
+  var lens = el("div","magnify-lens");
+  wrap.appendChild(img); wrap.appendChild(lens);
+  var zoom = 5;
+  wrap.addEventListener("mousemove", function(e){
+    var rect = img.getBoundingClientRect();
+    var x = e.clientX - rect.left, y = e.clientY - rect.top;
+    if(x<0 || y<0 || x>rect.width || y>rect.height){ lens.style.display="none"; return; }
+    var lw = lens.offsetWidth||160, lh = lens.offsetHeight||160;
+    lens.style.display = "block";
+    lens.style.left = (x-lw/2)+"px";
+    lens.style.top = (y-lh/2)+"px";
+    lens.style.backgroundImage = "url('"+imgData.src+"')";
+    lens.style.backgroundSize = (rect.width*zoom)+"px "+(rect.height*zoom)+"px";
+    lens.style.backgroundPosition = (-(x*zoom-lw/2))+"px "+(-(y*zoom-lh/2))+"px";
+  });
+  wrap.addEventListener("mouseleave", function(){ lens.style.display="none"; });
+  return wrap;
+}
+
 function pieChartEl(items, counts, total){
   var sorted = items.slice().sort(function(a,b){ return (counts[b.k]||0)-(counts[a.k]||0); });
   var top3 = sorted.slice(0,3);
