@@ -238,10 +238,13 @@ function renderVisual(container, v, blankFn, extra){
     container.appendChild(pr);
   } else if(v.type==="triangle"){
     var tw = el("div","triangle");
+    var lines = el("div","triangle-lines");
+    lines.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;"><polygon points="50,10 12,88 88,88" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-dasharray="4 3"/></svg>';
+    tw.appendChild(lines);
     tw.appendChild(el("span","vx top",esc(v.vertices[0])));
     tw.appendChild(el("span","vx bl",esc(v.vertices[1])));
     tw.appendChild(el("span","vx br",esc(v.vertices[2])));
-    var positions=[["46%","18%"],["18%","54%"],["72%","30%"],["58%","70%"],["30%","78%"],["78%","62%"]];
+    var positions=[["47%","26%"],["60%","39%"],["32%","53%"],["62%","63%"],["47%","70%"],["35%","76%"]];
     var orbitColors=["#F472B6","#60A5FA","#34D399","#FBBF24","#A78BFA","#FB7185"];
     v.orbit.forEach(function(w,i){ var s=el("span","orbit",esc(w)); var p=positions[i%positions.length]; s.style.left=p[0]; s.style.top=p[1]; s.style.color=orbitColors[i%orbitColors.length]; tw.appendChild(s); });
     container.appendChild(tw);
