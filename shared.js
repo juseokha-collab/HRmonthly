@@ -157,7 +157,7 @@ var SLIDES = [
  },
  note:["방금 여러분이 예상한 숫자와 비교해보세요.","이 숫자를 기억하는 것이 오늘 이 시간의 작은 목표입니다."]},
 
-{id:"s14",act:2,kind:"scale",hidePrompt:true,title:"① 우리 팀의 성장 가능성?",
+{id:"s14",act:2,kind:"scale",hidePrompt:true,bgCenter:true,title:"① 우리 팀의 성장 가능성?",
  body:["현재의 크기보다 중요한 것은 앞으로 만들어낼 수 있는 크기입니다.","주요 지표: 매출 · 고객 · 사업 규모 · 신규 BM"],
  visual:{type:"growthbars",scaleMax:80,series:[
    {year:"2024",dual:true,base:48,total:76.5,revealLabel:"28.3억"},
@@ -177,7 +177,16 @@ var SLIDES = [
 
 {id:"s16",act:2,kind:"content",title:"③ 수익성 : '많이'가 아니라 '잘' !",
  body:["매출 성장 ≠ 이익 성장","바쁘게 일함 ≠ 높은 생산성","고객이 많음 ≠ 좋은 BM"],
- visual:{type:"bizTable",rows:["A","B","C"],cols:["매출","수익성","반복성","확장성"],keyPrefix:"s16"},
+ visual:{type:"groupedbars",scaleMax:25,step:5,legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],groups:[
+   {label:"시스템-하이닉스",values:[22.1,11.6]},
+   {label:"집합-PJT(SKA)",values:[17.2,0.9]},
+   {label:"행사·특강",values:[7.1,1.8]},
+   {label:"시스템-기타",values:[8.8,5.5]},
+   {label:"자체콘텐츠",values:[8.5,7.5]},
+   {label:"러닝메이트 정기",values:[6.1,0.9]},
+   {label:"SKT(VLS·동반)",values:[5.8,5.6]},
+   {label:"러닝메이트 전사",values:[2.5,1.6]}
+ ]},
  caption:"우리가 만든 매출 중, 무엇이 진짜 기업가치로 남는가?",
  note:["이 부분은 특히 사업개발팀이 냉정하게 봐야 합니다.","매출을 만드는 능력과 좋은 BM을 만드는 능력은 다릅니다."]},
 
@@ -377,6 +386,57 @@ function renderVisual(container, v, blankFn, extra){
     outer.appendChild(labelsRow);
 
     container.appendChild(outer);
+  } else if(v.type==="groupedbars"){
+    var gscaleMax = v.scaleMax || 100;
+    var gstep = v.step || 10;
+    var gticks = []; for(var gtv=0; gtv<=gscaleMax; gtv+=gstep) gticks.push(gtv);
+
+    var gouter = el("div","gbars-outer2");
+    var glegend = el("div","gb-legend");
+    v.legend.forEach(function(l){
+      var item = el("span","gb-legend-item");
+      var sw = el("span","gb-swatch"); sw.style.background = l.color;
+      item.appendChild(sw); item.appendChild(document.createTextNode(l.label));
+      glegend.appendChild(item);
+    });
+    gouter.appendChild(glegend);
+
+    var gchartRow = el("div","gbars-chart-row2");
+    var gaxis = el("div","gbar-axis2");
+    gticks.slice().reverse().forEach(function(tv){ gaxis.appendChild(el("div","",String(tv))); });
+    gchartRow.appendChild(gaxis);
+
+    var gplot = el("div","gbar-plot2");
+    var ggrid = el("div","gbar-grid2");
+    gticks.forEach(function(tv){
+      var gline = el("div","gbar-gridline2"); gline.style.bottom = (tv/gscaleMax*100)+"%";
+      ggrid.appendChild(gline);
+    });
+    gplot.appendChild(ggrid);
+
+    var gbarsRow = el("div","gbar-bars-row2");
+    v.groups.forEach(function(grp){
+      var col = el("div","gbar-col2");
+      var barsWrap = el("div","gbar-bars-wrap2");
+      grp.values.forEach(function(val,vi){
+        var barCol = el("div","gbar-single");
+        barCol.appendChild(el("div","gbar-val-label",String(val)));
+        var track = el("div","gbar-single-track");
+        var fill = el("div","gbar-single-fill");
+        fill.style.height = Math.max(0,Math.min(100,val/gscaleMax*100))+"%";
+        fill.style.background = v.legend[vi] ? v.legend[vi].color : "#888";
+        track.appendChild(fill);
+        barCol.appendChild(track);
+        barsWrap.appendChild(barCol);
+      });
+      col.appendChild(barsWrap);
+      col.appendChild(el("div","gbar-cat-label2", esc(grp.label)));
+      gbarsRow.appendChild(col);
+    });
+    gplot.appendChild(gbarsRow);
+    gchartRow.appendChild(gplot);
+    gouter.appendChild(gchartRow);
+    container.appendChild(gouter);
   } else if(v.type==="bizTable"){
     var bt = el("table","data-table");
     var hr2 = el("tr"); hr2.appendChild(el("th","","사업")); v.cols.forEach(function(c){ hr2.appendChild(el("th","",esc(c))); }); bt.appendChild(hr2);
