@@ -419,14 +419,17 @@ function renderVisual(container, v, blankFn, extra){
       var col = el("div","gbar-col2");
       var barsWrap = el("div","gbar-bars-wrap2");
       grp.values.forEach(function(val,vi){
+        var pct = Math.max(0,Math.min(100,val/gscaleMax*100));
         var barCol = el("div","gbar-single");
-        barCol.appendChild(el("div","gbar-val-label",String(val)));
         var track = el("div","gbar-single-track");
         var fill = el("div","gbar-single-fill");
-        fill.style.height = Math.max(0,Math.min(100,val/gscaleMax*100))+"%";
+        fill.style.height = pct+"%";
         fill.style.background = v.legend[vi] ? v.legend[vi].color : "#888";
         track.appendChild(fill);
         barCol.appendChild(track);
+        var label = el("div","gbar-val-label",String(val));
+        label.style.bottom = pct+"%";
+        barCol.appendChild(label);
         barsWrap.appendChild(barCol);
       });
       col.appendChild(barsWrap);

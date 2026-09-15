@@ -237,11 +237,11 @@
   .gbar-bars-row2{position:relative;height:100%;display:flex;gap:14px;z-index:1;align-items:flex-end;}
   .gbar-col2{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:6px;}
   .gbar-bars-wrap2{display:flex;gap:4px;align-items:flex-end;height:100%;width:100%;justify-content:center;}
-  .gbar-single{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;flex:1;max-width:30px;}
-  .gbar-val-label{font-family:var(--font-m);font-size:10px;color:var(--ink);margin-bottom:2px;white-space:nowrap;}
-  .gbar-single-track{width:100%;height:100%;position:relative;display:flex;align-items:flex-end;}
-  .gbar-single-fill{width:100%;border-radius:3px 3px 0 0;min-height:2px;}
-  .gbar-cat-label2{font-family:var(--font-m);font-size:10px;color:var(--ink-faint);margin-top:14px;text-align:right;white-space:nowrap;transform:rotate(-30deg);transform-origin:top right;}
+  .gbar-single{position:relative;height:100%;flex:1;max-width:30px;}
+  .gbar-val-label{position:absolute;left:0;right:0;margin-bottom:4px;text-align:center;font-family:var(--font-m);font-size:10px;color:#fff;white-space:nowrap;}
+  .gbar-single-track{width:100%;height:100%;position:relative;overflow:hidden;}
+  .gbar-single-fill{position:absolute;left:0;right:0;bottom:0;width:100%;height:0;border-radius:3px 3px 0 0;min-height:2px;}
+  .gbar-cat-label2{font-family:var(--font-m);font-size:10px;color:#fff;margin-top:8px;text-align:center;white-space:nowrap;}
   .gbars-outer{margin-top:8px;}
   .gbars-chart-row{display:flex;align-items:stretch;}
   .gbar-axis{width:30px;height:170px;position:relative;flex:none;}
@@ -299,23 +299,26 @@
   .help-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--rule);background:var(--paper-raised);color:var(--ink-faint);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none;}
 
   .reveal-toggle{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:5px 12px;font-family:var(--font-m);font-weight:600;font-size:12px;color:var(--ink);}
-  .rvc-wrap{display:flex;justify-content:flex-start;gap:42px;width:100%;margin:0;}
+  .rvc-wrap{display:flex;flex-direction:column;gap:20px;width:100%;margin:0;}
+  .rvc-groups-row{display:flex;justify-content:flex-start;gap:42px;}
   .rvc-group{display:flex;flex-direction:column;align-items:center;gap:12px;}
   .rvc-glabel{font-family:var(--font-b);font-weight:700;font-size:19px;color:var(--ink);}
-  .rvc-bars{display:flex;gap:15px;align-items:flex-end;}
-  .rvc-col{display:flex;flex-direction:column;align-items:center;gap:6px;width:99px;}
-  .rvc-track{width:100%;height:210px;position:relative;overflow:visible;}
-  .rvc-clip{position:absolute;inset:0;background:rgba(255,255,255,.06);border-radius:8px 8px 0 0;overflow:hidden;}
+  .rvc-bars{display:flex;gap:15px;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.25);}
+  .rvc-track-col{width:99px;height:210px;position:relative;flex:none;}
+  .rvc-track{width:100%;height:100%;position:relative;background:rgba(255,255,255,.06);border-radius:8px 8px 0 0;overflow:hidden;}
   .rvc-fill{position:absolute;left:0;right:0;bottom:0;width:100%;height:0;transition:height 1.6s ease;}
   .rvc-fill.target{background:rgba(255,255,255,.3);}
   .rvc-fill.actual{background:var(--accent);}
   .rvc-fill.actual.negative{background:var(--danger);}
-  .rvc-neg-zone{width:100%;height:60px;position:relative;margin-top:2px;border-top:1px solid var(--rule);}
+  .rvc-neg-zone{position:absolute;top:100%;left:0;right:0;height:60px;}
   .rvc-neg-fill{position:absolute;top:0;left:0;right:0;height:0;background:var(--danger);border-radius:0 0 6px 6px;transition:height 1.6s ease;}
-  .rvc-float{position:absolute;left:0;right:0;bottom:100%;margin-bottom:6px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .rvc-float{position:absolute;left:0;right:0;margin-bottom:6px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:bottom 1.6s ease;}
+  .rvc-labels-row{display:flex;gap:15px;margin-top:8px;}
+  .rvc-label-col{width:99px;flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;}
   .rvc-tag{font-family:var(--font-m);font-size:15px;color:var(--ink-faint);}
   .rvc-val{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--ink);}
-  .rvc-pct{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--accent2);}
+  .rvc-summary{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+  .rvc-summary-line{font-family:var(--font-b);font-weight:600;font-size:15px;color:var(--ink-soft);}
   .rvc-fade{opacity:0;transition:opacity .5s ease;}
   .rvc-fade.in{opacity:1;}
   .reveal-line{font-family:var(--font-b);font-size:16px;line-height:1.85;color:var(--ink-soft);}
@@ -701,70 +704,87 @@ function pieChartEl(items, counts, total){
 }
 
 /* ============================= 9월 현재 공개 슬라이드용 애니메이션 막대그래프 ============================= */
+function revealSummaryLine(g){
+  var ratePct = Math.round(g.actual/g.target*100);
+  if(g.actual<0) return "ㅁ "+g.label+"은 9월 현재 여전히 적자 상태";
+  return "ㅁ "+g.label+"은 목표대비 "+ratePct+"% 진행";
+}
 function buildRevealChart(chart){
   var wrap = el("div","rvc-wrap");
+  var groupsRow = el("div","rvc-groups-row");
   var targetFills = [], actualFills = [];
   chart.groups.forEach(function(g){
     var group = el("div","rvc-group");
     group.appendChild(el("div","rvc-glabel",esc(g.label)));
-    var bars = el("div","rvc-bars");
 
-    var tCol = el("div","rvc-col");
+    var bars = el("div","rvc-bars");
+    var labelsRow = el("div","rvc-labels-row");
+
+    // 목표
+    var tTrackCol = el("div","rvc-track-col");
     var tTrack = el("div","rvc-track");
     var tFloat = el("div","rvc-float");
+    tFloat.style.bottom = "100%";
     tFloat.appendChild(el("div","rvc-val", g.target.toFixed(2)+g.unit));
     tTrack.appendChild(tFloat);
-    var tClip = el("div","rvc-clip");
     var tFill = el("div","rvc-fill target");
-    tClip.appendChild(tFill);
-    tTrack.appendChild(tClip);
-    tCol.appendChild(tTrack);
-    tCol.appendChild(el("div","rvc-tag","목표"));
-    bars.appendChild(tCol);
+    tTrack.appendChild(tFill);
+    tTrackCol.appendChild(tTrack);
+    bars.appendChild(tTrackCol);
+    var tLabelCol = el("div","rvc-label-col");
+    tLabelCol.appendChild(el("div","rvc-tag","목표"));
+    labelsRow.appendChild(tLabelCol);
 
+    // 9월 누적
     var isNeg = g.actual<0;
-    var aCol = el("div","rvc-col");
+    var aTrackCol = el("div","rvc-track-col");
     var aTrack = el("div","rvc-track");
     var aFloat = el("div","rvc-float rvc-fade");
-    var aVal = el("div","rvc-val", g.actual.toFixed(1)+g.unit);
-    aFloat.appendChild(aVal);
+    aFloat.style.bottom = "0%";
+    aFloat.appendChild(el("div","rvc-val", g.actual.toFixed(1)+g.unit));
     aTrack.appendChild(aFloat);
-    var aClip = el("div","rvc-clip");
     var aFill = el("div","rvc-fill actual"+(isNeg?" negative":""));
-    aClip.appendChild(aFill);
-    aTrack.appendChild(aClip);
-    aCol.appendChild(aTrack);
+    aTrack.appendChild(aFill);
+    aTrackCol.appendChild(aTrack);
     var negFill = null;
     if(isNeg){
       var negZone = el("div","rvc-neg-zone");
       negFill = el("div","rvc-neg-fill");
       negZone.appendChild(negFill);
-      aCol.appendChild(negZone);
+      aTrackCol.appendChild(negZone);
     }
-    aCol.appendChild(el("div","rvc-tag","9월 누적"));
-    var pct = el("div","rvc-pct rvc-fade", "목표대비 "+Math.round(g.actual/g.target*100)+"%");
-    aCol.appendChild(pct);
-    bars.appendChild(aCol);
+    bars.appendChild(aTrackCol);
+    var aLabelCol = el("div","rvc-label-col");
+    aLabelCol.appendChild(el("div","rvc-tag","9월 누적"));
+    labelsRow.appendChild(aLabelCol);
 
     group.appendChild(bars);
-    wrap.appendChild(group);
+    group.appendChild(labelsRow);
+    groupsRow.appendChild(group);
 
+    var aPct = isNeg? 0 : Math.max(0,Math.min(130, g.actual/g.target*100));
     targetFills.push({el:tFill, pct:100});
     actualFills.push({
-      el:aFill, pct: isNeg? 0 : Math.max(0,Math.min(130, g.actual/g.target*100)),
-      floatEl:aFloat, pctEl:pct,
+      el:aFill, pct:aPct, floatEl:aFloat,
       negFillEl:negFill, negPct: isNeg? Math.min(100, Math.abs(g.actual)/g.target*100) : 0
     });
   });
+
+  wrap.appendChild(groupsRow);
+
+  var summaryBox = el("div","rvc-summary rvc-fade");
+  chart.groups.forEach(function(g){ summaryBox.appendChild(el("div","rvc-summary-line", esc(revealSummaryLine(g)))); });
+  wrap.appendChild(summaryBox);
 
   setTimeout(function(){ targetFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 100);
   setTimeout(function(){
     actualFills.forEach(function(f){
       f.el.style.height = f.pct+"%";
+      f.floatEl.style.bottom = f.pct+"%";
       if(f.negFillEl) f.negFillEl.style.height = f.negPct+"%";
       f.floatEl.classList.add("in");
-      f.pctEl.classList.add("in");
     });
+    summaryBox.classList.add("in");
   }, 1900);
 
   return wrap;
