@@ -61,6 +61,15 @@
   .stage-body.single{grid-template-columns:1fr;}
   .stage-main{padding:52px 48px 32px;overflow:auto;display:flex;flex-direction:column;gap:20px;justify-content:flex-start;position:relative;}
   .stage-main > *{position:relative;z-index:1;}
+  .stage-main.warmup-slide{background-size:cover;background-position:center;cursor:pointer;}
+  .stage-main.warmup-slide::before{display:none;}
+  .stage-main.warmup-slide::after{content:"";position:absolute;inset:0;background:rgba(10,7,18,.55);z-index:0;}
+  .warmup-content{display:flex;flex-direction:column;gap:18px;}
+  .warmup-content.warmup-center{align-items:center;text-align:center;justify-content:center;flex:1;max-width:70ch;margin:0 auto;}
+  .warmup-content.warmup-left{align-items:flex-start;text-align:left;max-width:64ch;}
+  .warmup-stage-title{font-family:var(--font-m);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);}
+  .warmup-line{font-family:var(--font-b);font-weight:700;font-size:clamp(34px,6vw,60px);line-height:1.35;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.55);}
+  .warmup-item{font-family:var(--font-b);font-size:20px;line-height:1.6;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.55);}
   .stage-main.hero-cover::before{content:"";position:absolute;inset:0;background-image:url('images/butterfly-bg.png');background-repeat:no-repeat;background-position:right 6% center;background-size:min(42%,300px) auto;opacity:.16;pointer-events:none;z-index:0;}
   .stage-main.hero-cover::after{content:"";position:absolute;inset:0;background-image:url('images/butterfly-bg.png');background-repeat:no-repeat;background-position:left 6% center;background-size:min(42%,300px) auto;opacity:.16;pointer-events:none;z-index:0;}
   .stage-body{position:relative;}
@@ -326,6 +335,7 @@ var numquizOpen = {};     // numquiz 결과 패널의 "최고/최저" 상세 토
 var revealOpen = {};      // sideReveal 슬라이드의 우측 박스 열림 상태 (slide id -> bool)
 var gbarRevealOpen = {};  // growthbars 슬라이드의 "?" 클릭 시 라벨 노출 상태 (slide id -> bool)
 var dualscaleOpen = {};   // dualscale 결과 패널의 "평균 차이" 클릭 시 상세 통계 노출 상태 (slide id -> bool)
+var warmupState = {slideId:null, stage:0, count:0};  // 워밍업 슬라이드 클릭 진행 상태
 var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
 
 document.addEventListener("focusout", function(){
@@ -785,6 +795,34 @@ function render(){
       rowC.appendChild(el("div","ra-right"));
       main.appendChild(rowC);
     }
+  } else if(slide.warmup){
+    if(warmupState.slideId !== slide.id){ warmupState = {slideId:slide.id, stage:0, count:0}; }
+    var w = slide.warmup;
+    main.classList.add("warmup-slide");
+    main.style.backgroundImage = "url('"+w.bgImage+"')";
+
+    var stageContents = [w.intro].concat(w.lists.map(function(l){return l.items;}));
+    var stageTitles = [null].concat(w.lists.map(function(l){return l.title;}));
+    var curItems = stageContents[warmupState.stage] || [];
+    var curTitle = stageTitles[warmupState.stage];
+
+    var wwrap = el("div", warmupState.stage===0 ? "warmup-content warmup-center" : "warmup-content warmup-left");
+    if(curTitle) wwrap.appendChild(el("div","warmup-stage-title", esc(curTitle)));
+    for(var wi=0; wi<warmupState.count && wi<curItems.length; wi++){
+      var wprefix = warmupState.stage===0 ? "" : (wi+1)+". ";
+      wwrap.appendChild(el("div", warmupState.stage===0?"warmup-line":"warmup-item", esc(wprefix+curItems[wi])));
+    }
+    main.appendChild(wwrap);
+
+    main.addEventListener("click", function(){
+      if(warmupState.count < curItems.length){
+        warmupState.count++;
+      } else if(warmupState.stage < stageContents.length-1){
+        warmupState.stage++;
+        warmupState.count = 0;
+      }
+      render();
+    });
   } else {
     var contentWrap = main;
     if(slide.act===3){ var band = el("div","cover-band"); contentWrap = band; }
