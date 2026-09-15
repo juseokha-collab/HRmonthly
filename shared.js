@@ -190,20 +190,9 @@ var SLIDES = [
  caption:"우리가 만든 매출 중, 무엇이 진짜 기업가치로 남는가?",
  note:["이 부분은 특히 사업개발팀이 냉정하게 봐야 합니다.","매출을 만드는 능력과 좋은 BM을 만드는 능력은 다릅니다."]},
 
-{id:"s17",act:2,kind:"content",title:"우리가 중요하다고 생각하는 것, 고객도 동의하는가?",
- body:[],
- visual:{type:"twocol",colHead:["우리가 생각하는 가치","고객이 느끼는 가치"],rows:4,keyPrefix:"s17"},
- caption:"고객이 지갑을 여는 순간, 우리의 가치가 시장가치로 전환된다.",
- note:["가능하다면 실제 고객의 말을 1~2개 넣습니다.","우리가 자랑하는 것보다 고객이 좋아하는 것을 봐야 합니다."]},
-
-{id:"s18",act:2,kind:"dualwordcloud",hidePrompt:true,title:"경쟁력을 보유한 핵심역량이라는 착각?",
- body:["'우리는 중요하다고 생각하지만 실제 시장에서의 반응도 그러한가?'","","그리고 두 번째 질문 — '반대로 우리가 과소평가하고 있는 것은?'"],
- wc:{promptA:"과대평가",promptB:"과소평가"},
- caption:"성장은 새로운 것을 더하는 것뿐 아니라, 잘못된 믿음을 버리는 것에서도 시작된다.",
- note:["여기서는 방어적으로 반응하지 않는 게 중요합니다.","이 질문에는 정답이 없습니다. 오늘은 여러분의 생각을 그대로 보고 싶습니다."]},
-
 {id:"s19",act:2,kind:"choiceplus",hidePrompt:true,title:"HR개발팀 구성원 여러분\n우리 팀에 투자하시겠습니까?",
- body:["","정말 투자하시겠습니까?"],
+ body:[],
+ visual:{type:"triangle",vertices:["성장성","안정성","수익성"],orbit:["재미","의미","시간","자유","인정","경험"]},
  options:[{k:"strong",l:"적극 투자",em:"🟢"},{k:"watch-in",l:"투자하지만 지켜본다",em:"🟡"},{k:"proof",l:"조금 더 증명이 필요하다",em:"⚪"},{k:"no",l:"지금은 투자하지 않는다",em:"🔴"}],
  followup:"투자하지 않는다면, 딱 하나 무엇이 바뀌어야 합니까?",
  caption:"비판을 견디는 팀이 아니라, 비판을 성장의 정보로 바꾸는 팀.",
@@ -211,29 +200,15 @@ var SLIDES = [
 
 {id:"s20",act:3,kind:"content",title:"2026년의 성과 기반, 2027년 우리가 가려고 하는 방향과 속도는?",
  body:["2026년의 성과를 기반으로 2027년에는 선택과 집중이 필요."],
- visual:{type:"three",cols:[{h:"① 지켜야 할 것",items:["현재 BM","핵심 고객","안정적 매출"]},{h:"② 키워야 할 것",items:["성장 BM","신규 고객","확장 가능 사업"]},{h:"③ 새롭게 투자할 것",items:["신규 BM","AI","새로운 시장","새로운 역량"]}]},
+ visual:{type:"prioritylist",items:[
+   {tag:"최우선",color:"#DC2626",title:"자체콘텐츠 목표 만회 (최대 이익 레버)",desc:"1~7월 3.85억으로 계획 8.5억 대비 미달 전망. 공헌이익률 88%로 매출 1억이 곧 이익 0.9억 — 잔여 기간 이익 개선의 최대 레버."},
+   {tag:"이익방어",color:"#0D9488",title:"러닝메이트 축소 대응 · 목표 재설정",desc:"mySUNI 분담사 확대로 정기교육 수요 축소(계획 6.1억 vs 25년 3.2억). 이익률 14%라 이익 영향은 제한적 — 목표 현실화 및 전사교육 실행에 집중."},
+   {tag:"신시장",color:"#2563EB",title:"러닝메이트 Lite 고객 확보 (8월 런칭 완료)",desc:"중소기업 구독 고객 확보가 28년 HRD아카이브 고객 기반의 선행 학습. 산업안전팀 코웨이 채널 활용."},
+   {tag:"수주",color:"#1E3A5F",title:"I-Zen 참여 기회 확보 · 하이닉스 완결",desc:"I-Zen(SK그룹 AI 우수인력 사전 확보 프로젝트) 27년 시행 예정 - 기획인력 우선 투입. 하이닉스 Pit 연말 완결 및 27년 인디애나 발주 대비."},
+   {tag:"준비",color:"#1E3A5F",title:"HRD아카이브 27년 개발 사전 준비",desc:"26년은 준비에 집중 — CP 제휴 구조 재설계로 변동비 65% 절감안 마련, K-뉴딜 27년 차기 공모 협업으로 공공 레퍼런스 확보."}
+ ]},
  caption:"'더 많이 하는 것'이 아니라 '어디에 더 투자할 것인가' 방향 결정.",
  note:[]},
-
-{id:"s21",act:3,kind:"allocation",title:"100의 투자금이 있다면,\n어디에 배분하시겠습니까?",
- body:["100을 남김없이 전부 배분해야 합니다."],
- alloc:{cats:[{k:"existing",l:"기존 BM"},{k:"new",l:"신규 BM"},{k:"ai",l:"AI / 신기술"},{k:"cust",l:"고객 확대"},{k:"content",l:"콘텐츠 / 서비스"},{k:"people",l:"사람 / 조직"}]},
- caption:"우리가 원하는 미래는 결국 우리가 어디에 자원을 배분하느냐에 의해 결정된다.",
- note:["이제 여러분이 경영진입니다.","돈도 사람도 시간도 무한하지 않다고 생각하고 배분해주세요."]},
-
-{id:"s23",act:3,kind:"content",title:"2027년, 우리가 만들어야 할 가치는 무엇인가?",
- body:["2027년의 목표는 단순히 '더 많이 팔기'가 아닙니다."],
- visual:{type:"cards",items:[
-   {t:"성장",d:"새로운 시장과 고객"},{t:"수익",d:"더 좋은 수익구조"},{t:"반복",d:"한 번 만든 가치를 반복해서 활용"},
-   {t:"확장",d:"사람의 투입보다 빠르게 성장"},{t:"차별화",d:"다른 회사가 쉽게 따라올 수 없는 경쟁력"}]},
- caption:"좋은 BM은 사람의 노력만큼 성장하는 것이 아니라, 노력보다 빠르게 성장한다.",
- note:["여기가 2027년 핵심 메시지가 들어갈 자리입니다."]},
-
-{id:"s24",act:4,kind:"openthree",title:"회사의 미래와 나의 미래\n어디에서 만나는가?",
- body:["회사에 필요한 역량과","내가 키우고 싶은 역량이 만나는 지점을 찾아봅니다."],
- three:[{k:"more",l:"MORE — 앞으로 더 투자할 것"},{k:"less",l:"LESS — 앞으로 줄일 것"},{k:"new",l:"NEW — 새롭게 시작할 것"}],
- caption:"회사가 성장한다고 내가 자동으로 성장하는 것은 아니다.",
- note:["회사와 나의 성장이 만나는 지점을 찾는 것이 중요합니다.","회사가 원하는 사람과 내가 되고 싶은 사람이 완전히 다른 방향이라면 오래가기 어렵습니다."]},
 
 {id:"s25",act:4,kind:"sentence",title:"2027년의 나에게",
  body:["나는 앞으로 무엇에 투자하겠습니다.","시간 · 역량 · 경험 · 관계 · 건강 · 돈 · 용기 · 새로운 도전"],
@@ -504,6 +479,19 @@ function renderVisual(container, v, blankFn, extra){
     jcol.appendChild(el("div","johari-axis-x",esc(v.axisX||"")));
     jwrap.appendChild(jcol);
     container.appendChild(jwrap);
+  } else if(v.type==="prioritylist"){
+    var plList = el("div","pl-list");
+    v.items.forEach(function(it){
+      var row = el("div","pl-item");
+      var tag = el("div","pl-tag",esc(it.tag)); tag.style.background = it.color;
+      row.appendChild(tag);
+      var pbody = el("div","pl-body");
+      pbody.appendChild(el("div","pl-title",esc(it.title)));
+      pbody.appendChild(el("div","pl-desc",esc(it.desc)));
+      row.appendChild(pbody);
+      plList.appendChild(row);
+    });
+    container.appendChild(plList);
   } else if(v.type==="cards"){
     var cr = el("div","card-row");
     v.items.forEach(function(it){
