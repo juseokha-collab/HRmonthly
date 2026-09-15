@@ -180,9 +180,9 @@ var SLIDES = [
  visual:{type:"hbarsplit",scaleMax:25,legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],items:[
    {label:"시스템-하이닉스",revenue:22.1,profit:11.6},
    {label:"집합-PJT(SKA)",revenue:17.2,profit:0.9},
-   {label:"행사·특강",revenue:7.1,profit:1.8},
    {label:"시스템-기타",revenue:8.8,profit:5.5},
    {label:"자체콘텐츠",revenue:8.5,profit:7.5},
+   {label:"행사·특강",revenue:7.1,profit:1.8},
    {label:"러닝메이트 정기",revenue:6.1,profit:0.9},
    {label:"SKT(VLS·동반)",revenue:5.8,profit:5.6},
    {label:"러닝메이트 전사",revenue:2.5,profit:1.6}
@@ -397,8 +397,9 @@ function renderVisual(container, v, blankFn, extra){
       track.appendChild(revFill); track.appendChild(profFill);
       row.appendChild(track);
       var valWrap = el("div","hbar-values");
+      var profitRate = it.revenue? (it.profit/it.revenue*100).toFixed(1) : "0.0";
       valWrap.appendChild(el("span","hbar-val-rev", String(it.revenue)));
-      valWrap.appendChild(el("span","hbar-val-prof", String(it.profit)));
+      valWrap.appendChild(el("span","hbar-val-prof", it.profit+"("+profitRate+"%)"));
       row.appendChild(valWrap);
       hRows.appendChild(row);
       hFills.push({el:revFill, pct:Math.max(0,Math.min(100,it.revenue/hMax*100))});
