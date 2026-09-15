@@ -201,11 +201,11 @@ var SLIDES = [
 {id:"s20",act:3,kind:"content",title:"2026년의 성과 기반, 2027년 우리가 가려고 하는 방향과 속도는?",
  body:["2026년의 성과를 기반으로 2027년에는 선택과 집중이 필요."],
  visual:{type:"prioritylist",items:[
-   {tag:"최우선",color:"#DC2626",title:"자체콘텐츠 목표 만회 (최대 이익 레버)",desc:"1~7월 3.85억으로 계획 8.5억 대비 미달 전망. 공헌이익률 88%로 매출 1억이 곧 이익 0.9억 — 잔여 기간 이익 개선의 최대 레버."},
-   {tag:"이익방어",color:"#0D9488",title:"러닝메이트 축소 대응 · 목표 재설정",desc:"mySUNI 분담사 확대로 정기교육 수요 축소(계획 6.1억 vs 25년 3.2억). 이익률 14%라 이익 영향은 제한적 — 목표 현실화 및 전사교육 실행에 집중."},
-   {tag:"신시장",color:"#2563EB",title:"러닝메이트 Lite 고객 확보 (8월 런칭 완료)",desc:"중소기업 구독 고객 확보가 28년 HRD아카이브 고객 기반의 선행 학습. 산업안전팀 코웨이 채널 활용."},
-   {tag:"수주",color:"#1E3A5F",title:"I-Zen 참여 기회 확보 · 하이닉스 완결",desc:"I-Zen(SK그룹 AI 우수인력 사전 확보 프로젝트) 27년 시행 예정 - 기획인력 우선 투입. 하이닉스 Pit 연말 완결 및 27년 인디애나 발주 대비."},
-   {tag:"준비",color:"#1E3A5F",title:"HRD아카이브 27년 개발 사전 준비",desc:"26년은 준비에 집중 — CP 제휴 구조 재설계로 변동비 65% 절감안 마련, K-뉴딜 27년 차기 공모 협업으로 공공 레퍼런스 확보."}
+   {tag:"최우선",title:"자체콘텐츠 목표 만회 (최대 이익 레버)",desc:"1~7월 3.85억으로 계획 8.5억 대비 미달 전망. 공헌이익률 88%로 매출 1억이 곧 이익 0.9억 — 잔여 기간 이익 개선의 최대 레버."},
+   {tag:"이익방어",title:"러닝메이트 축소 대응 · 목표 재설정",desc:"mySUNI 분담사 확대로 정기교육 수요 축소(계획 6.1억 vs 25년 3.2억). 이익률 14%라 이익 영향은 제한적 — 목표 현실화 및 전사교육 실행에 집중."},
+   {tag:"신시장",title:"러닝메이트 Lite 고객 확보 (8월 런칭 완료)",desc:"중소기업 구독 고객 확보가 28년 HRD아카이브 고객 기반의 선행 학습. 산업안전팀 코웨이 채널 활용."},
+   {tag:"수주",title:"I-Zen 참여 기회 확보 · 하이닉스 완결",desc:"I-Zen(SK그룹 AI 우수인력 사전 확보 프로젝트) 27년 시행 예정 - 기획인력 우선 투입. 하이닉스 Pit 연말 완결 및 27년 인디애나 발주 대비."},
+   {tag:"준비",title:"HRD아카이브 27년 개발 사전 준비",desc:"26년은 준비에 집중 — CP 제휴 구조 재설계로 변동비 65% 절감안 마련, K-뉴딜 27년 차기 공모 협업으로 공공 레퍼런스 확보."}
  ]},
  caption:"'더 많이 하는 것'이 아니라 '어디에 더 투자할 것인가' 방향 결정.",
  note:[]},
@@ -483,7 +483,7 @@ function renderVisual(container, v, blankFn, extra){
     var plList = el("div","pl-list");
     v.items.forEach(function(it){
       var row = el("div","pl-item");
-      var tag = el("div","pl-tag",esc(it.tag)); tag.style.background = it.color;
+      var tag = el("div","pl-tag",esc(it.tag));
       row.appendChild(tag);
       var pbody = el("div","pl-body");
       pbody.appendChild(el("div","pl-title",esc(it.title)));
