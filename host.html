@@ -62,6 +62,7 @@
   .stage-main{padding:52px 48px 32px;overflow:auto;display:flex;flex-direction:column;gap:20px;justify-content:flex-start;position:relative;}
   .stage-main > *{position:relative;z-index:1;}
   .stage-main.hero-cover::before{content:"";position:absolute;inset:0;background-image:url('images/butterfly-bg.png');background-repeat:no-repeat;background-position:right 6% center;background-size:min(42%,300px) auto;opacity:.16;pointer-events:none;z-index:0;}
+  .stage-main.hero-cover::after{content:"";position:absolute;inset:0;background-image:url('images/butterfly-bg.png');background-repeat:no-repeat;background-position:left 6% center;background-size:min(42%,300px) auto;opacity:.16;pointer-events:none;z-index:0;}
   .stage-body{position:relative;}
   .stage-body::before{content:"";position:absolute;inset:0;background-image:url('images/butterfly-bg.png');background-repeat:no-repeat;background-position:28% center;background-size:min(30%,320px) auto;opacity:.24;pointer-events:none;z-index:0;}
   .stage-body.single::before{background-size:min(46%,340px) auto;}
