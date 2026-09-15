@@ -256,14 +256,21 @@ function buildForm(slide, container){
     });
     container.appendChild(sbq);
   } else if(slide.kind==="sentence"){
-    var f6 = el("div","field"); f6.appendChild(el("label","",esc(slide.sentence.prefix)+" ___ "+esc(slide.sentence.suffix)));
-    var inp6 = document.createElement("input"); inp6.type="text"; inp6.maxLength=40;
-    inp6.value = (myAnswer && myAnswer.text) || "";
-    f6.appendChild(inp6); container.appendChild(f6);
+    var sentInputs = {};
+    slide.sentences.forEach(function(sn){
+      var fS = el("div","field"); fS.appendChild(el("label","",esc(sn.prefix)+" ___ "+esc(sn.suffix)));
+      var inpS = document.createElement("input"); inpS.type="text"; inpS.maxLength=40;
+      inpS.value = (myAnswer && myAnswer[sn.key]) || "";
+      fS.appendChild(inpS); container.appendChild(fS);
+      sentInputs[sn.key] = inpS;
+    });
     var sb8 = el("button","submit-btn","제출");
-    sb8.addEventListener("click", function(){ if(inp6.value.trim()) submitCurrent({text: inp6.value.trim()}); });
-    f6.appendChild(sb8);
-    container.appendChild(f6);
+    sb8.addEventListener("click", function(){
+      var payload = {};
+      slide.sentences.forEach(function(sn){ payload[sn.key] = sentInputs[sn.key].value.trim(); });
+      submitCurrent(payload);
+    });
+    container.appendChild(sb8);
   }
 }
 

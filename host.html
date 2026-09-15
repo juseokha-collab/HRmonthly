@@ -573,11 +573,14 @@ function resultsPanel(slide){
     });
     body.appendChild(wc2);
   } else if(slide.kind==="sentence"){
-    var wall = el("div","wall");
-    docs.map(function(d){return d.text;}).filter(Boolean).forEach(function(t){
-      wall.appendChild(el("div","wall-item",esc(slide.sentence.prefix)+" <b>"+esc(t)+"</b> "+esc(slide.sentence.suffix)));
+    slide.sentences.forEach(function(sn,si){
+      if(si>0){ var fl2 = el("span","field-label",""); fl2.style.marginTop="14px"; fl2.style.display="block"; body.appendChild(fl2); }
+      var wall = el("div","wall");
+      docs.map(function(d){return d[sn.key];}).filter(Boolean).forEach(function(t){
+        wall.appendChild(el("div","wall-item",esc(sn.prefix)+" <b>"+esc(t)+"</b> "+esc(sn.suffix)));
+      });
+      body.appendChild(wall);
     });
-    body.appendChild(wall);
   } else if(slide.kind==="numquiz"){
     var qwrap = el("div","");
     slide.quiz.groups.forEach(function(g){
@@ -986,7 +989,7 @@ function render(){
     if(slide.kind==="compare"){
       main.appendChild(compareVisual(slide));
     } else if(isInteractive){
-      var pt = slide.kind==="scale" ? slide.scale.promptShort : slide.kind==="wordcloud" ? slide.wc.prompt : slide.kind==="dualwordcloud" ? (slide.wc.promptA+" / "+slide.wc.promptB) : slide.kind==="sentence" ? (slide.sentence.prefix+" ___ "+slide.sentence.suffix) : slide.kind==="choiceplus" ? slide.followup : slide.kind==="numquiz" ? "매출액/직접이익 목표와 달성율을 맞혀보세요" : "";
+      var pt = slide.kind==="scale" ? slide.scale.promptShort : slide.kind==="wordcloud" ? slide.wc.prompt : slide.kind==="dualwordcloud" ? (slide.wc.promptA+" / "+slide.wc.promptB) : slide.kind==="sentence" ? slide.sentences.map(function(sn){return sn.prefix+" ___ "+sn.suffix;}).join(" / ") : slide.kind==="choiceplus" ? slide.followup : slide.kind==="numquiz" ? "매출액/직접이익 목표와 달성율을 맞혀보세요" : "";
       if(pt && !slide.hidePrompt) main.appendChild(el("div","slide-caption","🗳️ 참여자 화면에 같은 질문이 떠 있습니다 — "+esc(pt)));
     }
 
