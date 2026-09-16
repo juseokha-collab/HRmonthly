@@ -212,7 +212,7 @@ var SLIDES = [
 
 {id:"s25",act:4,kind:"content",cover:true,
  title:"HR사업개발팀의 미래는\n당신의 선택과 실행에 달려있습니다",
- body:["2026년 남은 시간과 새롭게 시작할 2027년","당신의 선택과 실행이 구체화과정에 함께하겠습니다."]}
+ body:["2026년 남은 시간과 새롭게 시작할 2027년","당신의 선택과 실행의 구체화과정에 함께하겠습니다."]}
 ];
 
 var INTERACTIVE_KINDS = ["choice","scale","dualscale","wordcloud","dualwordcloud","allocation","choiceplus","openthree","sentence","numquiz"];
