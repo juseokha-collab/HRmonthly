@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>나는 어디에 투자하고 있는가 — 참여 (v2)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ink:#14151A; --ink-soft:#4A4C56; --ink-faint:#8A8C99;
+    --card:#FFFFFF; --line:#14151A;
+    --up:#C4351F; --ok:#1E7A3D;
+    --pink:#FAD3DC; --pink-deep:#F191A6;
+    --bg: var(--pink); --bg-deep: var(--pink-deep);
+    --font-d:'Black Han Sans',sans-serif; --font-hand:'Gaegu','IBM Plex Sans KR',sans-serif;
+    --font-b:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-m:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ink:#F1F1F4; --ink-soft:#C4C6CE; --ink-faint:#8A8C99;
+      --card:#232530; --line:#F1F1F4;
+      --up:#E8664F; --ok:#4FC27B;
+      --pink:#4A2E38; --pink-deep:#7A4457;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F1F1F4; --ink-soft:#C4C6CE; --ink-faint:#8A8C99;
+    --card:#232530; --line:#F1F1F4;
+    --up:#E8664F; --ok:#4FC27B;
+    --pink:#4A2E38; --pink-deep:#7A4457;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-b);}
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+
+  .top{padding:18px 18px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .eyebrow{font-family:var(--font-hand);font-weight:700;font-size:13px;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:5px 13px;}
+  .conn{font-family:var(--font-m);font-size:10.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:5px 11px;}
+  .conn .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);}
+  .conn[data-state="ok"]{color:var(--ok);} .conn[data-state="ok"] .dot{background:var(--ok);}
+  .conn[data-state="err"]{color:var(--up);} .conn[data-state="err"] .dot{background:var(--up);}
+
+  .wait-box{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:10px;}
+  .wait-box .w-hero{font-family:var(--font-d);font-size:34px;line-height:1.3;}
+  .wait-box .w-title{font-family:var(--font-d);font-size:26px;line-height:1.3;}
+  .wait-box .w-sub{font-family:var(--font-hand);font-size:15px;color:var(--ink-soft);max-width:32ch;}
+  .err-box{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--up);font-size:13.5px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="shared.js"></script>
+<script src="modules.js"></script>
+<script src="../firebase-sync.js"></script>
+<script>
+(function(){
+"use strict";
+
+var app = document.getElementById("app");
+var connState = "wait", connMsg = "";
+var slideIndex = 0;
+
+/* 1단계 데모 슬라이드는 둘 다 참가자 응답이 필요 없는(비설문) 모듈이라,
+   참가자 화면은 기존 index.html의 "대기 화면"과 동일하게 유지합니다.
+   설문형 모듈이 생기면(3단계) 여기에 buildForm 같은 분기를 추가합니다. */
+function render(){
+  app.innerHTML = "";
+
+  var top = el("div","top");
+  top.appendChild(el("span","eyebrow","v2 · "+String(slideIndex+1).padStart(2,"0")+"/"+SLIDES.length));
+  var connLabel = connState==="ok" ? "연결됨" : connState==="err" ? "연결 오류" : "연결 중";
+  var conn = el("span","conn"); conn.setAttribute("data-state",connState);
+  conn.innerHTML = "<span class=\"dot\"></span>"+esc(connLabel);
+  top.appendChild(conn);
+  app.appendChild(top);
+
+  if(connState==="err"){
+    app.appendChild(el("div","err-box", esc(connMsg||"연결에 실패했습니다. 새로고침해주세요.")));
+    return;
+  }
+
+  if(slideIndex===0){
+    var wb = el("div","wait-box");
+    wb.appendChild(el("div","w-hero","구성원 여러분 반갑습니다"));
+    wb.appendChild(el("div","w-title","9월 Monthly 시작합니다"));
+    wb.appendChild(el("div","w-sub","질문이 시작되면 자동으로 화면이 변경됩니다"));
+    app.appendChild(wb);
+  }
+}
+
+render();
+
+/* ============================= FIREBASE WIRE-UP ============================= */
+if(!FBSync.isConfigured()){
+  connState = "err"; connMsg = "firebase-config.js 에 실제 설정값을 입력해주세요.";
+  render();
+} else {
+  FBSync.init(
+    function(){
+      connState = "ok"; render();
+      FBSync.watchState(function(state){
+        slideIndex = (state && typeof state.slideIndex==="number") ? state.slideIndex : 0;
+        render();
+      });
+    },
+    function(msg){ connState = "err"; connMsg = msg; render(); }
+  );
+}
+
+})();
+</script>
+</body>
+</html>

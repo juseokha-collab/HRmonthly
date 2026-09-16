@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나는 어디에 투자하고 있는가 — 진행자 화면 (v2 모듈 엔진)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#0B0712; --paper-raised:#17101F;
+    --ink:#F7F5FC; --ink-soft:#C7C1DE; --ink-faint:#8B84A8;
+    --rule:rgba(255,255,255,.10); --up:#A855F7;
+    --ok:#34D399; --ok-soft:rgba(52,211,153,.16);
+    --danger:#FB7185; --danger-soft:rgba(251,113,133,.16);
+    --highlight:#FBBF24;
+    --accent:#A855F7; --accent2:#E056FD; --accent-grad:linear-gradient(135deg,var(--accent),var(--accent2));
+    --shadow:rgba(168,85,247,.30);
+    --font-d:'Gowun Batang',serif; --font-b:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-m:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% 15%, rgba(168,85,247,.35), transparent 42%),
+      radial-gradient(circle at 88% 78%, rgba(224,86,253,.28), transparent 48%),
+      var(--paper);
+    color:var(--ink);font-family:var(--font-b);
+  }
+  #app{min-height:100vh;color:var(--ink);}
+  h1,h2,h3{margin:0;font-weight:600;}
+  p{margin:0;}
+  button{font-family:var(--font-b);cursor:pointer;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--rule);font-family:var(--font-m);font-size:12px;color:var(--ink-soft);gap:12px;flex-wrap:wrap;}
+  .act-badge{letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid var(--rule);color:var(--up);}
+  .counter{font-variant-numeric:tabular-nums;letter-spacing:.04em;}
+  .top-right{display:flex;gap:10px;align-items:center;}
+  .conn-badge{border-radius:999px;padding:5px 11px;font-size:11px;display:flex;align-items:center;gap:6px;border:1px solid var(--rule);}
+  .conn-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);}
+  .conn-badge[data-state="ok"]{color:var(--ok);border-color:var(--ok-soft);} .conn-badge[data-state="ok"] .dot{background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft);}
+  .conn-badge[data-state="err"]{color:var(--danger);border-color:var(--danger-soft);} .conn-badge[data-state="err"] .dot{background:var(--danger);}
+  .badge-v2{font-family:var(--font-m);font-size:11px;color:#fff;background:var(--accent-grad);border-radius:999px;padding:4px 10px;}
+
+  .stage{min-height:100vh;display:flex;flex-direction:column;}
+  .stage-body{flex:1;display:grid;grid-template-columns:1fr;gap:0;min-height:0;position:relative;}
+  .stage-body::before{content:"";position:absolute;inset:0;background-image:url('../images/butterfly-bg.png');background-repeat:no-repeat;background-position:center;background-size:min(30%,320px) auto;opacity:.24;pointer-events:none;z-index:0;}
+  .stage-main{padding:52px 48px 32px;overflow:auto;display:flex;flex-direction:column;gap:20px;justify-content:flex-start;position:relative;}
+  .stage-main > *{position:relative;z-index:1;}
+  .stage-main.warmup-slide{cursor:pointer;}
+  .stage-main.hero-cover{align-items:center;text-align:center;justify-content:center;min-height:64vh;background:var(--accent-grad);border-radius:28px;padding:70px 48px;box-shadow:0 24px 70px var(--shadow);}
+  .stage-main.hero-cover::before{content:"";position:absolute;inset:0;background-image:url('../images/butterfly-bg.png');background-repeat:no-repeat;background-position:right 6% center;background-size:min(42%,300px) auto;opacity:.16;pointer-events:none;z-index:0;}
+  .stage-main.hero-cover::after{content:"";position:absolute;inset:0;background-image:url('../images/butterfly-bg.png');background-repeat:no-repeat;background-position:left 6% center;background-size:min(42%,300px) auto;opacity:.16;pointer-events:none;z-index:0;}
+  .stage-main.hero-cover .slide-eyebrow{color:rgba(255,255,255,.85);text-align:center;}
+  .stage-main.hero-cover .slide-title{color:#fff;font-size:clamp(26px,4.8vw,48px);word-break:keep-all;text-align:center;}
+  .stage-main.hero-cover .slide-body{color:rgba(255,255,255,.92);max-width:60ch;margin:0 auto;text-align:center;}
+  .stage-main.hero-cover .pill-row{justify-content:center;}
+  .stage-main.hero-cover .pill{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff;}
+
+  .warmup-content{display:flex;flex-direction:column;gap:18px;}
+  .warmup-content.warmup-center{align-items:center;text-align:center;justify-content:flex-start;padding-top:22vh;gap:36px;max-width:70ch;margin:0 auto;}
+
+  .slide-eyebrow{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;}
+  .slide-title{font-family:var(--font-b);font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;}
+  .slide-body{font-size:16px;line-height:1.85;color:var(--ink-soft);max-width:62ch;}
+  .slide-body .ln{margin-bottom:2px;}
+  .pill-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .pill{font-family:var(--font-m);font-size:13px;letter-spacing:.04em;border:1px solid var(--rule);border-radius:999px;padding:7px 14px;background:var(--paper-raised);}
+
+  .stage-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--rule);gap:10px;}
+  .nav-cluster{display:flex;gap:8px;align-items:center;}
+  .nav-btn{border:1px solid var(--rule);background:var(--paper-raised);border-radius:999px;padding:8px 16px;font-family:var(--font-m);font-size:13px;color:var(--ink);}
+  .nav-btn:disabled{opacity:.35;cursor:default;}
+  .nav-btn.primary{background:var(--accent-grad);color:#fff;border-color:transparent;font-weight:600;box-shadow:0 4px 18px var(--shadow);}
+  .progress-rail{flex:1;height:3px;background:var(--rule);border-radius:2px;margin:0 16px;position:relative;overflow:hidden;}
+  .progress-fill{position:absolute;inset:0 auto 0 0;background:var(--up);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="shared.js"></script>
+<script src="modules.js"></script>
+<script src="../firebase-sync.js"></script>
+<script>
+(function(){
+"use strict";
+
+var app = document.getElementById("app");
+
+var LOCAL_KEY = "hrbd_host_local_v2";
+var local = { slideIndex:0 };
+(function loadLocal(){
+  try{ var raw = localStorage.getItem(LOCAL_KEY); if(raw){ var p=JSON.parse(raw); local.slideIndex=p.slideIndex||0; } }catch(e){}
+})();
+function persistLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); }catch(e){} }
+
+var connState = "wait";
+var connMsg = "";
+
+/* 모듈 엔진의 상태는 slide 하나당 이 변수 하나로 통일됩니다.
+   slide.id가 바뀔 때만 MODULES[slide.module].initState()로 새로 만들어지므로,
+   기존처럼 슬라이드 타입마다 전역 state 변수를 새로 선언하고
+   goTo()에 리셋 줄을 추가할 필요가 없습니다. */
+var currentState = null;
+function ensureState(slide){
+  if(!currentState || currentState.slideId !== slide.id){
+    currentState = MODULES[slide.module].initState(slide);
+    currentState.slideId = slide.id;
+  }
+  return currentState;
+}
+
+function currentSlide(){ return SLIDES[local.slideIndex]; }
+
+function goTo(i){
+  if(i<0||i>=SLIDES.length) return;
+  local.slideIndex = i; persistLocal();
+  FBSync.setSlideIndex(i);
+  render();
+}
+document.addEventListener("keydown", function(e){
+  var tag = (document.activeElement && document.activeElement.tagName) || "";
+  if(tag==="INPUT"||tag==="TEXTAREA") return;
+  if(e.key==="ArrowRight"||e.key===" "){ e.preventDefault(); goTo(local.slideIndex+1); }
+  if(e.key==="ArrowLeft"){ e.preventDefault(); goTo(local.slideIndex-1); }
+});
+
+function render(){
+  app.innerHTML = "";
+  var slide = currentSlide();
+  var state = ensureState(slide);
+  var stage = el("div","stage");
+
+  var top = el("div","topbar");
+  var left = el("div","");
+  left.appendChild(el("span","act-badge",esc("ACT "+slide.act+" · "+(ACT_LABEL[slide.act]||""))));
+  left.appendChild(el("span","badge-v2","v2 모듈 엔진"));
+  var right = el("div","top-right");
+  right.appendChild(el("span","counter",String(local.slideIndex+1).padStart(2,"0")+" / "+SLIDES.length));
+  var connLabel = connState==="ok" ? "실시간 연결됨" : connState==="err" ? "연결 오류" : "연결 중…";
+  var conn = el("span","conn-badge"); conn.setAttribute("data-state",connState);
+  conn.innerHTML = "<span class=\"dot\"></span>"+esc(connLabel);
+  conn.title = connMsg;
+  right.appendChild(conn);
+  top.appendChild(left); top.appendChild(right);
+  stage.appendChild(top);
+
+  var body = el("div","stage-body");
+  var main = el("div","stage-main");
+  LAYOUTS[slide.layout].mount(main, slide);
+  MODULES[slide.module].renderHost(main, slide, state, {el:el, esc:esc, rerender:render});
+  body.appendChild(main);
+  stage.appendChild(body);
+
+  var footer = el("div","stage-footer");
+  var prevBtn = el("button","nav-btn","← 이전"); prevBtn.disabled = local.slideIndex===0;
+  prevBtn.addEventListener("click", function(){ goTo(local.slideIndex-1); });
+  var rail = el("div","progress-rail"); var fill = el("div","progress-fill"); fill.style.width=((local.slideIndex+1)/SLIDES.length*100)+"%"; rail.appendChild(fill);
+  var nextBtn = el("button","nav-btn primary", local.slideIndex===SLIDES.length-1? "처음으로 ↺" : "다음 →");
+  nextBtn.addEventListener("click", function(){ goTo(local.slideIndex===SLIDES.length-1?0:local.slideIndex+1); });
+  var nav = el("div","nav-cluster"); nav.appendChild(prevBtn);
+  footer.appendChild(nav); footer.appendChild(rail); footer.appendChild(nextBtn);
+  stage.appendChild(footer);
+
+  app.appendChild(stage);
+}
+
+render();
+
+/* ============================= FIREBASE WIRE-UP ============================= */
+if(!FBSync.isConfigured()){
+  connState = "err"; connMsg = "firebase-config.js 에 실제 설정값을 입력해주세요.";
+  render();
+} else {
+  FBSync.init(
+    function(uid){ connState = "ok"; connMsg = "uid: "+uid; render(); },
+    function(msg){ connState = "err"; connMsg = msg; render(); }
+  );
+}
+
+})();
+</script>
+</body>
+</html>
