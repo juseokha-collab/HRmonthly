@@ -556,7 +556,7 @@ function magnifyImageEl(imgData){
     var rect = img.getBoundingClientRect();
     var x = e.clientX - rect.left, y = e.clientY - rect.top;
     if(x<0 || y<0 || x>rect.width || y>rect.height){ lens.style.display="none"; return; }
-    var lw = lens.offsetWidth||160, lh = lens.offsetHeight||160;
+    var lw = lens.offsetWidth||320, lh = lens.offsetHeight||320;
     lens.style.display = "block";
     lens.style.left = (x-lw/2)+"px";
     lens.style.top = (y-lh/2)+"px";
