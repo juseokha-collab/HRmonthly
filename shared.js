@@ -176,7 +176,7 @@ var SLIDES = [
  note:[]},
 
 {id:"s16",act:2,kind:"content",title:"③ 수익성 : '많이'가 아니라 '잘' !",
- body:["매출 성장 ≠ 이익 성장","바쁘게 일함 ≠ 높은 생산성","고객이 많음 ≠ 좋은 BM"],
+ body:["매출 성장 ≠ 이익 성장, 바쁘게 일함 ≠ 높은 생산성, 고객이 많음 ≠ 좋은 BM"],
  visual:{type:"hbarsplit",scaleMax:25,sideImage:{src:"images/slide18-pnl.png",alt:"2025년 손익배분"},legend:[{label:"매출",color:"#6366F1"},{label:"공헌이익",color:"#14B8A6"}],items:[
    {label:"시스템-하이닉스",revenue:22.1,profit:11.6},
    {label:"집합-PJT(SKA)",revenue:17.2,profit:0.9},
@@ -551,7 +551,7 @@ function magnifyImageEl(imgData){
   var img = document.createElement("img"); img.src = imgData.src; img.alt = imgData.alt||""; img.className = "magnify-img";
   var lens = el("div","magnify-lens");
   wrap.appendChild(img); wrap.appendChild(lens);
-  var zoom = 5;
+  var zoom = 4;
   wrap.addEventListener("mousemove", function(e){
     var rect = img.getBoundingClientRect();
     var x = e.clientX - rect.left, y = e.clientY - rect.top;
