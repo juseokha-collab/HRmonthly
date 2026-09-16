@@ -151,8 +151,8 @@ var SLIDES = [
  caption:"우리가 지금 향하고 있는 숫자입니다.",
  sideReveal:{label:"9월 현재",lines:["2026년 9월 현재까지의"],
    chart:{groups:[
-     {label:"매출액",target:78.07,actual:54.7,unit:"억"},
-     {label:"직접이익",target:5.1,actual:-1.4,unit:"억"}
+     {label:"매출액",target:78.07,actual:54.7,unit:"억",detailNote:"41.08억"},
+     {label:"직접이익",target:5.1,actual:-1.4,unit:"억",detailNote:"△2.73억"}
    ]}
  },
  note:["방금 여러분이 예상한 숫자와 비교해보세요.","이 숫자를 기억하는 것이 오늘 이 시간의 작은 목표입니다."]},

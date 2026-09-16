@@ -341,6 +341,7 @@
   .rvc-val{font-family:var(--font-m);font-weight:700;font-size:18px;color:var(--ink);}
   .rvc-summary{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
   .rvc-summary-line{font-family:var(--font-b);font-weight:600;font-size:15px;color:var(--ink-soft);}
+  .rvc-wrap.rvc-clickable{cursor:pointer;}
   .rvc-fade{opacity:0;transition:opacity .5s ease;}
   .rvc-fade.in{opacity:1;}
   .reveal-line{font-family:var(--font-b);font-size:16px;line-height:1.85;color:var(--ink-soft);}
@@ -392,6 +393,7 @@ var revealOpen = {};      // sideReveal 슬라이드의 우측 박스 열림 상
 var gbarRevealOpen = {};  // growthbars 슬라이드의 "?" 클릭 시 라벨 노출 상태 (slide id -> bool)
 var dualscaleOpen = {};   // dualscale 결과 패널의 "평균 차이" 클릭 시 상세 통계 노출 상태 (slide id -> bool)
 var scaleLinkOpen = {};   // scale 결과 패널의 최고/최저점 클릭 시 연계 설문(s06) 노출 상태 (slide id -> bool)
+var rvcDetailOpen = {};   // 9월 현재 그래프 클릭 시 요약 문구 상세(괄호) 노출 상태 (slide id -> bool)
 var warmupState = {slideId:null, stage:0, count:0};  // 워밍업 슬라이드 클릭 진행 상태
 var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
 
@@ -752,12 +754,13 @@ function pieChartEl(items, counts, total){
 }
 
 /* ============================= 9월 현재 공개 슬라이드용 애니메이션 막대그래프 ============================= */
-function revealSummaryLine(g){
+function revealSummaryLine(g, showDetail){
   var ratePct = Math.round(g.actual/g.target*100);
-  if(g.actual<0) return "ㅁ "+g.label+"은 9월 현재 여전히 적자 상태";
-  return "ㅁ "+g.label+"은 목표대비 "+ratePct+"% 진행";
+  var detail = (showDetail && g.detailNote) ? ("("+g.detailNote+")") : "";
+  if(g.actual<0) return "ㅁ "+g.label+"은 9월 현재 여전히 적자 상태"+detail;
+  return "ㅁ "+g.label+"은 목표대비 "+ratePct+"% 진행"+detail;
 }
-function buildRevealChart(chart){
+function buildRevealChart(chart, slideId){
   var wrap = el("div","rvc-wrap");
   var groupsRow = el("div","rvc-groups-row");
   var targetFills = [], actualFills = [];
@@ -821,8 +824,11 @@ function buildRevealChart(chart){
   wrap.appendChild(groupsRow);
 
   var summaryBox = el("div","rvc-summary rvc-fade");
-  chart.groups.forEach(function(g){ summaryBox.appendChild(el("div","rvc-summary-line", esc(revealSummaryLine(g)))); });
+  var showDetail = !!rvcDetailOpen[slideId];
+  chart.groups.forEach(function(g){ summaryBox.appendChild(el("div","rvc-summary-line", esc(revealSummaryLine(g, showDetail)))); });
   wrap.appendChild(summaryBox);
+  wrap.classList.add("rvc-clickable");
+  wrap.addEventListener("click", function(){ rvcDetailOpen[slideId] = !rvcDetailOpen[slideId]; render(); });
 
   setTimeout(function(){ targetFills.forEach(function(f){ f.el.style.height = f.pct+"%"; }); }, 100);
   setTimeout(function(){
@@ -922,7 +928,7 @@ function render(){
       blines.forEach(function(l){ leftCell.appendChild(el("div", l.indexOf("ㅁ")===0?"ln bullet":"ln", esc(l))); });
       rowChart.appendChild(leftCell);
       var rightCell = el("div","ra-right");
-      if(open) rightCell.appendChild(buildRevealChart(slide.sideReveal.chart));
+      if(open) rightCell.appendChild(buildRevealChart(slide.sideReveal.chart, slide.id));
       rowChart.appendChild(rightCell);
       main.appendChild(rowChart);
     } else {
