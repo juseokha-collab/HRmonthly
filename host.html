@@ -398,6 +398,7 @@ var dualscaleOpen = {};   // dualscale 결과 패널의 "평균 차이" 클릭 �
 var scaleLinkOpen = {};   // scale 결과 패널의 최고/최저점 클릭 시 연계 설문(s06) 노출 상태 (slide id -> bool)
 var rvcDetailOpen = {};   // 9월 현재 그래프 클릭 시 요약 문구 상세(괄호) 노출 상태 (slide id -> bool)
 var warmupState = {slideId:null, stage:0, count:0};  // 워밍업 슬라이드 클릭 진행 상태
+var icebreakerState = {slideId:null, step:0};  // 아이스브레이커 슬라이드 클릭 진행 상태
 var pendingRender = false; // 진행자가 blank 입력 중일 때 재렌더로 포커스가 끊기지 않도록 지연
 
 document.addEventListener("focusout", function(){
@@ -413,6 +414,7 @@ function goTo(i){
   if(i<0||i>=SLIDES.length) return;
   local.slideIndex = i; persistLocal();
   if(SLIDES[i].warmup){ warmupState = {slideId:SLIDES[i].id, phase:"intro", introCount:0, selfCount:0, interCount:0}; }
+  if(SLIDES[i].icebreaker){ icebreakerState = {slideId:SLIDES[i].id, step:0}; }
   FBSync.setSlideIndex(i); // 참여자 화면에 즉시 반영
   render();
 }
@@ -929,6 +931,18 @@ function render(){
       rowC.appendChild(el("div","ra-right"));
       main.appendChild(rowC);
     }
+  } else if(slide.icebreaker){
+    if(icebreakerState.slideId !== slide.id){ icebreakerState = {slideId:slide.id, step:0}; }
+    main.classList.add("hero-cover");
+    main.classList.add("warmup-slide");
+    main.appendChild(el("div","slide-eyebrow","HR사업개발팀 · MONTHLY"));
+    var icWrap = el("div","warmup-content warmup-center");
+    var icMsg = slide.icebreaker.messages[icebreakerState.step] || "";
+    icWrap.appendChild(el("div","slide-title", esc(icMsg).replace(/\n/g,"<br>")));
+    main.appendChild(icWrap);
+    main.addEventListener("click", function(){
+      if(icebreakerState.step < slide.icebreaker.messages.length-1){ icebreakerState.step++; render(); }
+    });
   } else if(slide.warmup){
     if(warmupState.slideId !== slide.id){ warmupState = {slideId:slide.id, phase:"intro", introCount:0, selfCount:0, interCount:0}; }
     var w = slide.warmup;

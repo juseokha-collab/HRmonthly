@@ -8,6 +8,13 @@
 var ACT_LABEL = {1:"PERSONAL INVESTOR",2:"INVESTMENT MEMO",3:"INVESTMENT COMMITTEE",4:"TO MYSELF"};
 
 var SLIDES = [
+{id:"s00a",act:1,kind:"content",cover:true,
+ icebreaker:{messages:[
+   "유현 매니저님 반갑습니다\n자리에서 일어나 주세요",
+   "두손을 번쩍 들어주시고",
+   "9월 Monthly 시작합니다 라고 외쳐주세요"
+ ]}},
+
 {id:"s00",act:1,kind:"content",cover:true,title:"오랜만입니다!\n다시, 함께 모이는 시간",
  body:["여러 일정에 밀려 잠시 쉬어갔던 Monthly, 오랜만에 다시 엽니다.","자유롭게 서로의 생각을 나누는 시간이 되길 바랍니다."],
  visual:{type:"pills",items:["반갑습니다","오랜만입니다","자유롭게","솔직하게","함께"]}},
