@@ -406,7 +406,15 @@ function renderVisual(container, v, blankFn, extra){
     });
     hOuter.appendChild(hRows);
     hWrap.appendChild(hOuter);
-    if(v.sideImage){ hWrap.appendChild(magnifyImageEl(v.sideImage)); }
+    if(v.sideImage){
+      if(extra.revealOpen){
+        hWrap.appendChild(magnifyImageEl(v.sideImage));
+      } else {
+        var revealBtn = el("div","hbar-reveal-btn","👆 클릭하면 손익배분표가 나옵니다");
+        if(extra.onToggleReveal) revealBtn.addEventListener("click", extra.onToggleReveal);
+        hWrap.appendChild(revealBtn);
+      }
+    }
     container.appendChild(hWrap);
     setTimeout(function(){ hFills.forEach(function(f){ f.el.style.width = f.pct+"%"; }); }, 100);
   } else if(v.type==="groupedbars"){
@@ -551,12 +559,12 @@ function magnifyImageEl(imgData){
   var img = document.createElement("img"); img.src = imgData.src; img.alt = imgData.alt||""; img.className = "magnify-img";
   var lens = el("div","magnify-lens");
   wrap.appendChild(img); wrap.appendChild(lens);
-  var zoom = 4;
+  var zoom = 3;
   wrap.addEventListener("mousemove", function(e){
     var rect = img.getBoundingClientRect();
     var x = e.clientX - rect.left, y = e.clientY - rect.top;
     if(x<0 || y<0 || x>rect.width || y>rect.height){ lens.style.display="none"; return; }
-    var lw = lens.offsetWidth||320, lh = lens.offsetHeight||320;
+    var lw = lens.offsetWidth||720, lh = lens.offsetHeight||720;
     lens.style.display = "block";
     lens.style.left = (x-lw/2)+"px";
     lens.style.top = (y-lh/2)+"px";

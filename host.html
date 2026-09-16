@@ -235,9 +235,10 @@
   .hbar-wrap-row{display:flex;gap:24px;align-items:flex-start;margin-top:8px;}
   .hbar-outer{flex:0 0 40%;min-width:0;}
   .hbar-row{min-width:0;}
+  .hbar-reveal-btn{flex:1;min-width:0;min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--rule);border-radius:12px;background:var(--paper-raised);color:var(--ink-soft);font-family:var(--font-b);font-weight:600;font-size:15px;cursor:pointer;}
   .magnify-wrap{position:relative;flex:1;min-width:0;cursor:crosshair;}
   .magnify-img{max-width:100%;display:block;border-radius:10px;border:1px solid var(--rule);}
-  .magnify-lens{display:none;position:absolute;width:480px;height:480px;border-radius:50%;border:3px solid var(--accent);box-shadow:0 8px 24px rgba(0,0,0,.5);background-repeat:no-repeat;pointer-events:none;z-index:5;}
+  .magnify-lens{display:none;position:absolute;width:720px;height:720px;border-radius:50%;border:3px solid var(--accent);box-shadow:0 8px 24px rgba(0,0,0,.5);background-repeat:no-repeat;pointer-events:none;z-index:5;}
   .hbar-rows{display:flex;flex-direction:column;gap:11px;}
   .hbar-row{display:flex;align-items:center;gap:10px;}
   .hbar-label{width:130px;flex:none;font-family:var(--font-m);font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -302,7 +303,8 @@
   .stage-main.hero-cover{align-items:center;text-align:center;justify-content:center;min-height:64vh;background:var(--accent-grad);border-radius:28px;padding:70px 48px;box-shadow:0 24px 70px var(--shadow);}
   .stage-main.hero-cover .slide-eyebrow{color:rgba(255,255,255,.85);}
   .stage-main.hero-cover .slide-title{color:#fff;font-size:clamp(26px,4.8vw,48px);white-space:nowrap;}
-  .stage-main.hero-cover .slide-body{color:rgba(255,255,255,.92);max-width:60ch;}
+  .stage-main.hero-cover .slide-body{color:rgba(255,255,255,.92);max-width:60ch;margin:0 auto;text-align:center;}
+  .stage-main.hero-cover .slide-eyebrow{text-align:center;}
   .stage-main.hero-cover .pill-row{justify-content:center;}
   .stage-main.hero-cover .pill{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff;}
   .stage-main.hero-cover .slide-caption{border-left:none;color:rgba(255,255,255,.85);}
