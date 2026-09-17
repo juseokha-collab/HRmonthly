@@ -44,8 +44,11 @@
 
   .stage{min-height:100vh;display:flex;flex-direction:column;}
   .stage-body{flex:1;display:grid;grid-template-columns:1fr;gap:0;min-height:0;position:relative;}
+  .stage-body.split{grid-template-columns:1.05fr 1fr;}
   .stage-body::before{content:"";position:absolute;inset:0;background-image:url('../images/butterfly-bg.png');background-repeat:no-repeat;background-position:center;background-size:min(30%,320px) auto;opacity:.24;pointer-events:none;z-index:0;}
+  .stage-body.split::before{background-position:25% center;background-size:min(24%,260px) auto;}
   .stage-main{padding:52px 48px 32px;overflow:auto;display:flex;flex-direction:column;gap:20px;justify-content:flex-start;position:relative;}
+  .stage-side{padding:52px 40px 32px;border-left:1px solid var(--rule);overflow:auto;display:flex;flex-direction:column;gap:16px;justify-content:flex-start;position:relative;z-index:1;}
   .stage-main > *{position:relative;z-index:1;}
   .stage-main.warmup-slide{cursor:pointer;}
   .stage-main.hero-cover{align-items:center;text-align:center;justify-content:center;min-height:64vh;background:var(--accent-grad);border-radius:28px;padding:70px 48px;box-shadow:0 24px 70px var(--shadow);}
@@ -57,8 +60,26 @@
   .stage-main.hero-cover .pill-row{justify-content:center;}
   .stage-main.hero-cover .pill{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff;}
 
+  .warmup-lists-row{display:flex;gap:40px;position:relative;z-index:1;height:100%;}
   .warmup-content{display:flex;flex-direction:column;gap:18px;}
   .warmup-content.warmup-center{align-items:center;text-align:center;justify-content:flex-start;padding-top:22vh;gap:36px;max-width:70ch;margin:0 auto;}
+  .warmup-content.warmup-left{align-items:flex-start;text-align:left;flex:1;}
+  .warmup-stage-title{font-family:var(--font-m);font-weight:700;font-size:22px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85);}
+  .warmup-line{font-family:var(--font-b);font-weight:700;font-size:clamp(22px,4vw,40px);line-height:1.35;color:#fff;}
+  .warmup-placeholder{color:rgba(255,255,255,.55);letter-spacing:.04em;}
+  .warmup-item{font-family:var(--font-b);font-size:24px;line-height:1.5;color:#fff;}
+
+  .cr-box{background:var(--paper-raised);border:1px solid var(--rule);border-radius:16px;padding:24px;cursor:pointer;}
+  .cr-box.open{cursor:default;}
+  .cr-label{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .cr-line{font-family:var(--font-b);font-size:15px;color:var(--ink-soft);margin-bottom:4px;}
+  .cr-hint{margin-top:14px;font-family:var(--font-m);font-size:13px;color:var(--ink-faint);}
+  .cr-row{margin-top:16px;}
+  .cr-row-label{font-family:var(--font-m);font-size:12px;color:var(--ink-soft);margin-bottom:6px;}
+  .cr-track{height:10px;border-radius:6px;background:var(--rule);overflow:hidden;position:relative;}
+  .cr-fill{height:100%;background:var(--accent-grad);border-radius:6px;}
+  .cr-fill.neg{background:var(--danger);width:4px!important;}
+  .cr-row-nums{margin-top:6px;font-family:var(--font-m);font-size:12px;color:var(--ink-faint);}
 
   .slide-eyebrow{font-family:var(--font-m);font-size:12px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;}
   .slide-title{font-family:var(--font-b);font-weight:700;font-size:clamp(24px,3.1vw,40px);line-height:1.3;letter-spacing:-.01em;}
@@ -150,11 +171,14 @@ function render(){
   top.appendChild(left); top.appendChild(right);
   stage.appendChild(top);
 
-  var body = el("div","stage-body");
+  var layout = LAYOUTS[slide.layout];
+  var body = el("div","stage-body"+(layout.split?" split":""));
   var main = el("div","stage-main");
-  LAYOUTS[slide.layout].mount(main, slide);
-  MODULES[slide.module].renderHost(main, slide, state, {el:el, esc:esc, rerender:render});
+  var side = layout.split ? el("div","stage-side") : null;
+  layout.mount(main, side, slide);
+  MODULES[slide.module].renderHost(main, side, slide, state, {el:el, esc:esc, rerender:render});
   body.appendChild(main);
+  if(side) body.appendChild(side);
   stage.appendChild(body);
 
   var footer = el("div","stage-footer");
